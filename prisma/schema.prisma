@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// datasource db {
+//   provider  = "postgresql"
+//   url       = env("DATABASE_URL")
+//   directUrl = env("DIRECT_URL")
+// }
+
+model MissionDrone{
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    dateDebutVol DateTime
+    dateFinVol DateTime
+    typeMission String
+    capteurUtilise String
+    statutValidation Boolean
+    motDePasse String
+    motsCles String
+    nomProprietaire String
+    emailProprietaire String @unique
+    entrepriseProprietaire String
+    generale MetadonneesGenerales?
+    technique MetadonneesTechniques?
+    admin MetadonneesAdmin?
+}
+
+model MetadonneesGenerales{
+    id      String   @id @default(auto()) @map("_id") @db.ObjectId
+    mission MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
+    idMission   String  @db.ObjectId @unique
+    titre   String
+    resume   String
+    categorieThematique   String
+}
+
+model MetadonneesTechniques{
+    id      String   @id @default(auto()) @map("_id") @db.ObjectId
+    mission MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
+    idMission   String  @db.ObjectId @unique
+    datePublication   DateTime
+    xmin   Float
+    ymin   Float
+    xmax   Float
+    ymax   Float
+    debut   DateTime
+    fin   DateTime
+}
+
+model MetadonneesAdmin{
+    id      String   @id @default(auto()) @map("_id") @db.ObjectId
+    mission MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
+    idMission   String  @db.ObjectId @unique
+    langue   String
+    SRS_CRSUtilise   String
+    contraintesLegales   String
+}

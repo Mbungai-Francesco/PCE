@@ -12,7 +12,7 @@
   },
   "license": "ISC",
   "author": "Mbungai Francesco",
-  "type": "commonjs",
+  "type": "module",
   "main": "src/server.ts",
   "scripts": {
     "dev": "nodemon --watch src --exec ts-node src/server.ts",
