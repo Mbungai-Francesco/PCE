@@ -23,7 +23,7 @@ model MissionDrone{
     id        String   @id @default(auto()) @map("_id") @db.ObjectId
     dateDebutVol DateTime
     dateFinVol DateTime
-    typeMission String
+    typeMission String?
     capteurUtilise String
     statutValidation Boolean
     motDePasse String
@@ -54,8 +54,8 @@ model MetadonneesTechniques{
     ymin   Float
     xmax   Float
     ymax   Float
-    debut   DateTime
-    fin   DateTime
+    debut   DateTime?
+    fin   DateTime?
 }
 
 model MetadonneesAdmin{
