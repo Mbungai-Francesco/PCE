@@ -32,7 +32,7 @@ model MissionDrone {
   motDePasse              String
   motsCles                String
   nomProprietaire         String
-  emailProprietaire       String                  @unique
+  emailProprietaire       String                  
   entrepriseProprietaire  String
 
   generale                MetadonneesGenerales?
@@ -47,6 +47,8 @@ model MetadonneesGenerales {
   titre         String
   resume        String
   categorieThematique String
+
+  @@unique([id, idMission])
 }
 
 model MetadonneesTechniques {
@@ -60,6 +62,7 @@ model MetadonneesTechniques {
   yMax          Float
   debut         DateTime?
   fin           DateTime?
+  @@unique([id, idMission])
 
   // PostGIS geometry column (store bounding box or geometry). Prisma does not
   // natively support PostGIS types, so declare as Unsupported("geometry").
@@ -75,4 +78,5 @@ model MetadonneesAdmin {
   langue        String
   SRS_CRSUtilise String
   contraintesLegales String
+  @@unique([id, idMission])
 }
