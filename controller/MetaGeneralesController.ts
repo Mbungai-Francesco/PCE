@@ -15,6 +15,11 @@ export const CreateMetaGenerales = async (req: Request, res: Response) => {
 			return res.status(404).json({ message: 'Referenced MissionDrone not found' });
 		}
 
+        const generalesExist = await db.metadonneesGenerales.findUnique({ where: { idMission } });
+        if (generalesExist) {
+            return res.status(409).json({ message: 'MetadonneesGenerales for this mission already exists' });
+        }
+
 		const meta = await db.metadonneesGenerales.create({
 			data: {
 				idMission,
