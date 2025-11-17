@@ -8,8 +8,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Switched to PostgreSQL with PostGIS support. Ensure your DATABASE_URL
+// points to a Postgres database with the PostGIS extension enabled.
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -19,50 +21,58 @@ datasource db {
 //   directUrl = env("DIRECT_URL")
 // }
 
-model MissionDrone{
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    dateDebutVol DateTime
-    dateFinVol DateTime
-    typeMission String?
-    capteurUtilise String
-    statutValidation Boolean
-    motDePasse String
-    motsCles String
-    nomProprietaire String
-    emailProprietaire String @unique
-    entrepriseProprietaire String
-    generale MetadonneesGenerales?
-    technique MetadonneesTechniques?
-    admin MetadonneesAdmin?
+model MissionDrone {
+  // Use UUID primary keys on Postgres
+  id                      String                  @id @default(uuid()) @db.Uuid
+  dateDebutVol            DateTime
+  dateFinVol              DateTime
+  typeMission             String?
+  capteurUtilise          String
+  statutValidation        Boolean
+  motDePasse              String
+  motsCles                String
+  nomProprietaire         String
+  emailProprietaire       String                  @unique
+  entrepriseProprietaire  String
+
+  generale                MetadonneesGenerales?
+  technique               MetadonneesTechniques?
+  admin                   MetadonneesAdmin?
 }
 
-model MetadonneesGenerales{
-    id      String   @id @default(auto()) @map("_id") @db.ObjectId
-    mission MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
-    idMission   String  @db.ObjectId @unique
-    titre   String
-    resume   String
-    categorieThematique   String
+model MetadonneesGenerales {
+  id            String       @id @default(uuid()) @db.Uuid
+  idMission     String       @db.Uuid @unique
+  mission       MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
+  titre         String
+  resume        String
+  categorieThematique String
 }
 
-model MetadonneesTechniques{
-    id      String   @id @default(auto()) @map("_id") @db.ObjectId
-    mission MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
-    idMission   String  @db.ObjectId @unique
-    datePublication   DateTime
-    xmin   Float
-    ymin   Float
-    xmax   Float
-    ymax   Float
-    debut   DateTime?
-    fin   DateTime?
+model MetadonneesTechniques {
+  id            String       @id @default(uuid()) @db.Uuid
+  idMission     String       @db.Uuid @unique
+  mission       MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
+  datePublication DateTime
+  xMin          Float
+  yMin          Float
+  xMax          Float
+  yMax          Float
+  debut         DateTime?
+  fin           DateTime?
+
+  // PostGIS geometry column (store bounding box or geometry). Prisma does not
+  // natively support PostGIS types, so declare as Unsupported("geometry").
+  // You will still need to enable PostGIS in the DB and manage migrations to
+  // create/alter this column (see notes after this change).
+  // bbox          Unsupported("geometry")?
 }
 
-model MetadonneesAdmin{
-    id      String   @id @default(auto()) @map("_id") @db.ObjectId
-    mission MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
-    idMission   String  @db.ObjectId @unique
-    langue   String
-    SRS_CRSUtilise   String
-    contraintesLegales   String
+model MetadonneesAdmin {
+  id            String       @id @default(uuid()) @db.Uuid
+  idMission     String       @db.Uuid @unique
+  mission       MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
+  langue        String
+  SRS_CRSUtilise String
+  contraintesLegales String
 }
