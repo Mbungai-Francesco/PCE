@@ -12,7 +12,6 @@
   },
   "license": "ISC",
   "author": "Mbungai Francesco",
-  "type": "module",
   "main": "src/server.ts",
   "scripts": {
     "dev": "nodemon --watch src --exec ts-node src/server.ts",
@@ -22,26 +21,29 @@
     "migrate": "prisma migrate dev"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.0",
+    "@prisma/adapter-pg": "^7.0.0",
+    "@prisma/client": "^7.0.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^22.1.0",
     "@vercel/node": "^2.0.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.4.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv": "^17.2.3",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.12.0",
     "nodemon": "^3.1.4",
     "openai": "^4.56.0",
+    "pg": "^8.16.3",
     "postgres": "^3.4.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "prisma": "^6.19.0"
+    "@types/node": "^24.10.1",
+    "@types/pg": "^8.15.6",
+    "prisma": "^7.0.0"
   }
 }
