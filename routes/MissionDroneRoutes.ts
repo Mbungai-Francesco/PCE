@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import express from 'express';
 import {
   CreateMissionDrone,
   GetAllMissionsDrones,
@@ -7,7 +7,7 @@ import {
   DeleteMissionDroneById,
 } from '../controller/MissionDroneController';
 
-const MissionRoutes = Router();
+const MissionRoutes = express.Router();
 
 MissionRoutes.post('/mission', CreateMissionDrone);
 MissionRoutes.get('/mission', GetAllMissionsDrones);

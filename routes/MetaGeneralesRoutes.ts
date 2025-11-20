@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import express from 'express';
 import {
   CreateMetaGenerales,
   GetAllMetaGenerales,
@@ -7,7 +7,7 @@ import {
   DeleteMetaGeneralesById,
 } from '../controller/MetaGeneralesController';
 
-const GeneralesRoutes = Router();
+const GeneralesRoutes = express.Router();
 
 GeneralesRoutes.post('/metagenerales', CreateMetaGenerales);
 GeneralesRoutes.get('/metagenerales', GetAllMetaGenerales);

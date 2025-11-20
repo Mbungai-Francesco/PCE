@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import 'dotenv/config';
 
 import cors from 'cors';
-import MissionRoutes from '../routes/MissioneDroneRoutes';
+import MissionRoutes from '../routes/MissionDroneRoutes';
 import AdminRoutes from '../routes/MetaAdminRoutes';
 import TechRoutes from '../routes/MetaTechniquesRoutes';
 import GeneralesRoutes from '../routes/MetaGeneralesRoutes';
@@ -29,7 +29,7 @@ app.get('*', (req: Request, res: Response) => {
   res.status(404).json({ message: 'You are OUT OF BOUNDARIES!!!' });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 5000;
 
 app.listen(PORT, () => {
   console.log(

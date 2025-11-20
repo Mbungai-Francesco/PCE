@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import express from 'express';
 import {
   CreateMetaAdmin,
   GetAllMetaAdmin,
@@ -7,7 +7,7 @@ import {
   DeleteMetaAdminById,
 } from '../controller/MetaAdminController';
 
-const AdminRoutes = Router();
+const AdminRoutes = express.Router();
 
 AdminRoutes.post('/metadmin', CreateMetaAdmin);
 AdminRoutes.get('/metadmin', GetAllMetaAdmin);

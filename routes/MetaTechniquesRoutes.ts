@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import express from 'express';
 import {
   CreateMetaTechniques,
   GetAllMetaTechniques,
@@ -7,7 +7,7 @@ import {
   DeleteMetaTechniquesById,
 } from '../controller/MetaTechniquesController';
 
-const TechRoutes = Router();
+const TechRoutes = express.Router();
 
 TechRoutes.post('/metatechniques', CreateMetaTechniques);
 TechRoutes.get('/metatechniques', GetAllMetaTechniques);
