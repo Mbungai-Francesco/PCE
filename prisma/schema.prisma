@@ -12,7 +12,6 @@ generator client {
 // points to a Postgres database with the PostGIS extension enabled.
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // datasource db {
