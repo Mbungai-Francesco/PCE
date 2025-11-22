@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -14,61 +8,55 @@ datasource db {
 }
 
 model MissionDrone {
-  // Use UUID primary keys on Postgres
-  id                      String                  @id @default(uuid()) @db.Uuid
-  dateDebutVol            DateTime
-  dateFinVol              DateTime
-  typeMission             String?
-  capteurUtilise          String
-  statutValidation        Boolean
-  motDePasse              String
-  motsCles                String
-  nomProprietaire         String
-  emailProprietaire       String                  
-  entrepriseProprietaire  String
-
-  generale                MetadonneesGenerales?
-  technique               MetadonneesTechniques?
-  admin                   MetadonneesAdmin?
+  id                     String                 @id @default(uuid()) @db.Uuid
+  dateDebutVol           DateTime
+  dateFinVol             DateTime
+  typeMission            String?
+  capteurUtilise         String
+  statutValidation       Boolean
+  motDePasse             String
+  motsCles               String
+  nomProprietaire        String
+  emailProprietaire      String
+  entrepriseProprietaire String
+  admin                  MetadonneesAdmin?
+  generale               MetadonneesGenerales?
+  technique              MetadonneesTechniques?
 }
 
 model MetadonneesGenerales {
-  id            String       @id @default(uuid()) @db.Uuid
-  idMission     String       @db.Uuid @unique
-  mission       MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
-  titre         String
-  resume        String
+  id                  String       @id @default(uuid()) @db.Uuid
+  idMission           String       @unique @db.Uuid
+  titre               String
+  resume              String
   categorieThematique String
+  mission             MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
 
   @@unique([id, idMission])
 }
 
 model MetadonneesTechniques {
-  id            String       @id @default(uuid()) @db.Uuid
-  idMission     String       @db.Uuid @unique
-  mission       MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
+  id              String       @id @default(uuid()) @db.Uuid
+  idMission       String       @unique @db.Uuid
   datePublication DateTime
-  xMin          Float
-  yMin          Float
-  xMax          Float
-  yMax          Float
-  debut         DateTime?
-  fin           DateTime?
-  @@unique([id, idMission])
+  xMin            Float
+  yMin            Float
+  xMax            Float
+  yMax            Float
+  debut           DateTime?
+  fin             DateTime?
+  mission         MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
 
-  // PostGIS geometry column (store bounding box or geometry). Prisma does not
-  // natively support PostGIS types, so declare as Unsupported("geometry").
-  // You will still need to enable PostGIS in the DB and manage migrations to
-  // create/alter this column (see notes after this change).
-  // bbox          Unsupported("geometry")?
+  @@unique([id, idMission])
 }
 
 model MetadonneesAdmin {
-  id            String       @id @default(uuid()) @db.Uuid
-  idMission     String       @db.Uuid @unique
-  mission       MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
-  langue        String
-  SRS_CRSUtilise String
+  id                 String       @id @default(uuid()) @db.Uuid
+  idMission          String       @unique @db.Uuid
+  langue             String
+  SRS_CRSUtilise     String
   contraintesLegales String
+  mission            MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
+
   @@unique([id, idMission])
 }
