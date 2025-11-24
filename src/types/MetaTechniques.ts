@@ -1,6 +1,6 @@
-import type { MissionDrone } from "./"
+import type { MissionDrone } from "."
 
-export interface MetadonnessTechniques{
+export interface MetaTechniques{
     id ?: string      
     idMission : string
     datePublication : Date

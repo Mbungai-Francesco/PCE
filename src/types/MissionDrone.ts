@@ -2,7 +2,7 @@ export  interface MissionDrone{
     id ?: string
     dateDebutVol : Date       
     dateFinVol : Date     
-    typeMission : string      
+    typeMission ?: string      
     capteurUtilise : string      
     statutValidation : boolean
     motDePasse : string    

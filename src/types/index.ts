@@ -1,4 +1,4 @@
 export type { MissionDrone } from "./MissionDrone"
-export type { MetadonneesGenerales } from "./MetadonneesGenerales"
-export type { MetadonnessTechniques } from "./MetadonneesTechniques"
-export type { MetadonneesAdmin } from "./MetadonneesAdmin"
+export type { MetaGenerales } from "./MetaGenerales"
+export type { MetaTechniques } from "./MetaTechniques"
+export type { MetaAdmin } from "./MetaAdmin"

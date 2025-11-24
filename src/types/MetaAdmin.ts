@@ -1,6 +1,6 @@
-import type { MissionDrone } from "./"
+import type { MissionDrone } from "."
 
-export interface MetadonneesAdmin {
+export interface MetaAdmin {
     id ?: string                   
     idMission :string              
     langue : string   
