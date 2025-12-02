@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { MissionForm, type MissionFormHandle } from './MissionForm';
-import { GeneraleForm } from './GeneraleForm';
+import { GeneraleForm, type GeneraleFormHandle } from './GeneraleForm';
 import { Button } from '@/components/ui/button';
 
 export const FormPage = () => {
-  const [formNum, setFormNum] = useState(1);
+  const [formNum, setFormNum] = useState(2);
   const progressRef = useRef<HTMLDivElement | null>(null);
   const missionFormRef = useRef<MissionFormHandle>(null);
+  const generaleFormRef = useRef<GeneraleFormHandle>(null);
 
   useEffect(() => {
     if(progressRef.current){
@@ -18,8 +19,16 @@ export const FormPage = () => {
 
   const submit = async () => {
     // Validate and submit current form
+    // console.log(`form ${formNum}`);
+    // console.log(`mission ${missionFormRef.current}`);
+    // console.log(`generale ${generaleFormRef.current}`);
+    
     if (formNum === 1 && missionFormRef.current) {
       const isValid = await missionFormRef.current.submit();
+      if (!isValid) return;
+    }
+    if (formNum === 2 && generaleFormRef.current) {
+      const isValid = await generaleFormRef.current.submit();
       if (!isValid) return;
     }
     // Add similar checks for other forms (formNum === 2, etc.)
@@ -43,7 +52,7 @@ export const FormPage = () => {
         </div>
         <div className={cn('w-full min-h-10 bg-white rounded-b-xl py-7 px-8 text-black')}>
           {formNum === 1 && <MissionForm ref={missionFormRef} />}
-          {formNum === 2 && <GeneraleForm />}
+          {formNum === 2 && <GeneraleForm ref={generaleFormRef} />}
           <div className='mt-4 flex justify-end space-x-4'>
             {formNum != 1 &&
              <Button 

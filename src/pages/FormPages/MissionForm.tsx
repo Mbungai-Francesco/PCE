@@ -14,9 +14,12 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useMutation } from "@tanstack/react-query";
+import type { MissionDrone } from "@/types";
+import { createMissionsDrones } from "@/api/MissionDroneApi";
 
 const formSchema = z.object({
-	dateDeVol: z.string().min(1, "Flight date is required"),
+	dateDebutVol: z.string().min(1, "Flight date is required"),
 	dateFinVol: z.string().min(1, "Flight end date is required"),
 	typeMission: z.string().optional(),
   capteurUtilise: z.string().min(1, "Sensor used is required"),
@@ -37,7 +40,7 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			dateDeVol: "",
+			dateDebutVol: "",
 			dateFinVol: "",
 			typeMission: "",
       capteurUtilise: "",
@@ -54,8 +57,28 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
-		console.log(values);
+    
+    const val : MissionDrone = {
+      ...values,
+      dateDebutVol : new Date(values.dateDebutVol),
+      dateFinVol : new Date(values.dateFinVol),
+    }
+    console.log(val);
+
+    // mutate(val);
 	}
+
+  const { mutate } = useMutation({
+    mutationFn: ( val : MissionDrone) => {
+      return createMissionsDrones(val)
+    },
+    onSuccess: (data) =>{
+      console.log("Mission Drone created successfully:", data);
+    },
+    onError: (error) =>{
+      console.error("Error creating Mission Drone:", error);
+    },
+  })
 
 	// Expose submit method to parent
 	useImperativeHandle(ref, () => ({
@@ -79,7 +102,7 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 				</div>
 				<FormField
 					control={form.control}
-					name="dateDeVol"
+					name="dateDebutVol"
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Date de Vol</FormLabel>
