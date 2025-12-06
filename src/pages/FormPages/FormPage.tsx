@@ -3,12 +3,17 @@ import { cn } from '@/lib/utils'
 import { MissionForm, type MissionFormHandle } from './MissionForm';
 import { GeneraleForm, type GeneraleFormHandle } from './GeneraleForm';
 import { Button } from '@/components/ui/button';
+import { loadToast } from '@/lib/loadToast';
+import { getMissionDroneById } from '@/api/MissionDroneApi';
+import { useData } from '@/hook/useData';
 
 export const FormPage = () => {
-  const [formNum, setFormNum] = useState(2);
+  const [formNum, setFormNum] = useState(1);
   const progressRef = useRef<HTMLDivElement | null>(null);
   const missionFormRef = useRef<MissionFormHandle>(null);
   const generaleFormRef = useRef<GeneraleFormHandle>(null);
+
+  const { missionData, setMissionData } = useData();
 
   useEffect(() => {
     if(progressRef.current){
@@ -19,17 +24,17 @@ export const FormPage = () => {
 
   const submit = async () => {
     // Validate and submit current form
-    // console.log(`form ${formNum}`);
-    // console.log(`mission ${missionFormRef.current}`);
-    // console.log(`generale ${generaleFormRef.current}`);
     
     if (formNum === 1 && missionFormRef.current) {
       const isValid = await missionFormRef.current.submit();
-      if (!isValid) return;
+      
+      if (!isValid) return
+      else loadToast('Mission Created', '', 3000, 'green')
     }
     if (formNum === 2 && generaleFormRef.current) {
       const isValid = await generaleFormRef.current.submit();
       if (!isValid) return;
+      else loadToast('Generales Created', '', 3000, 'green')
     }
     // Add similar checks for other forms (formNum === 2, etc.)
     
@@ -37,6 +42,13 @@ export const FormPage = () => {
       setFormNum(formNum + 1);
     }
   }
+
+  useEffect(() =>{
+    getMissionDroneById('9a999ab7-e2d0-4e1f-9ef4-3915bd15ad8b').then((res) => {
+      console.log('Fetched Mission Drone:', res);
+      setMissionData(res)
+    })
+  },[setMissionData])
 
   return (
     <div className={'bg-linear-to-br from-blue-400 to-purple-700 min-h-screen w-full pt-10'}>
@@ -51,7 +63,7 @@ export const FormPage = () => {
           </div>
         </div>
         <div className={cn('w-full min-h-10 bg-white rounded-b-xl py-7 px-8 text-black')}>
-          {formNum === 1 && <MissionForm ref={missionFormRef} />}
+          {(formNum === 1 && missionData?.id) && <MissionForm ref={missionFormRef} />}
           {formNum === 2 && <GeneraleForm ref={generaleFormRef} />}
           <div className='mt-4 flex justify-end space-x-4'>
             {formNum != 1 &&

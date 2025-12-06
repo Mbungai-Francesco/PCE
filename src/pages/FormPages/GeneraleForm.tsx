@@ -14,6 +14,10 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useMutation } from "@tanstack/react-query";
+import type { MetaGenerales } from "@/types";
+import { loadToast } from "@/lib/loadToast";
+import { createMetaGenerales } from "@/api/MetaGeneralesApi";
 
 const formSchema = z.object({
 	titre: z.string().min(1, "Title is required"),
@@ -42,6 +46,21 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 		// ✅ This will be type-safe and validated.
 		console.log(values);
 	}
+
+	const { mutate } = useMutation({
+		mutationFn: (val: MetaGenerales) => {
+			loadToast("Creating Mission", "", 0, "blue");
+			return createMetaGenerales(val);
+		},
+		onSuccess: (data) => {
+			console.log("Generales created successfully:", data);
+			loadToast("Generales Created", "", 1, "green");
+		},
+		onError: (error) => {
+			loadToast("Error Creating Generales", "", 3000, "red");
+			console.error("Error creating Generales:", error);
+		},
+	});
 
 	// Expose submit method to parent
 	useImperativeHandle(ref, () => ({

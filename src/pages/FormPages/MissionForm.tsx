@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
 import type { MissionDrone } from "@/types";
 import { createMissionsDrones } from "@/api/MissionDroneApi";
+import { loadToast } from "@/lib/loadToast";
+import { useData } from "@/hook/useData";
 
 const formSchema = z.object({
 	dateDebutVol: z.string().min(1, "Flight date is required"),
@@ -35,24 +37,32 @@ export interface MissionFormHandle {
 	submit: () => Promise<boolean>;
 }
 
+
 export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
+	// const { initialData } = props;
+  const { missionData, setMissionData } = useData();
+  
+  // Use prop data if provided, otherwise use context
+  // const data = initialData || missionData;
+  const data = missionData;
+
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			dateDebutVol: "",
-			dateFinVol: "",
-			typeMission: "",
-      capteurUtilise: "",
-      statutValidation: false,
-      motDePasse: "",
-      motsCles: "",
-      nomProprietaire: "",
-      emailProprietaire: "",
-      entrepriseProprietaire: "",
+			dateDebutVol: data?.dateDebutVol ? new Date(data.dateDebutVol).toISOString().split('T')[0] : "",
+			dateFinVol: data?.dateFinVol ? new Date(data.dateFinVol).toISOString().split('T')[0] : "",
+			typeMission: data?.typeMission || "",
+      capteurUtilise: data?.capteurUtilise || "",
+      statutValidation: data?.statutValidation || false,
+      motDePasse: data?.motDePasse || "",
+      motsCles: data?.motsCles || "",
+      nomProprietaire: data?.nomProprietaire || "",
+      emailProprietaire: data?.emailProprietaire || "",
+      entrepriseProprietaire: data?.entrepriseProprietaire || "",
 		},
 	});
-
+  
 	// 2. Define a submit handler.
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
@@ -65,17 +75,21 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
     }
     console.log(val);
 
-    // mutate(val);
+    mutate(val);
 	}
 
   const { mutate } = useMutation({
     mutationFn: ( val : MissionDrone) => {
+      loadToast('Creating Mission', '', 0, 'blue')
       return createMissionsDrones(val)
     },
     onSuccess: (data) =>{
+      loadToast('Mission Created', '', 3000, 'green')
       console.log("Mission Drone created successfully:", data);
+      setMissionData(data);
     },
     onError: (error) =>{
+      loadToast('Error Creating Mission', '', 3000, 'red')
       console.error("Error creating Mission Drone:", error);
     },
   })

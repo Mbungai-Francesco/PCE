@@ -1,7 +1,7 @@
 export  interface MissionDrone{
     id ?: string
-    dateDebutVol : Date       
-    dateFinVol : Date     
+    dateDebutVol : Date // format local ISO string ! YYYY-MM-DD
+    dateFinVol : Date // format local ISO string ! YYYY-MM-DD
     typeMission ?: string      
     capteurUtilise : string      
     statutValidation : boolean
