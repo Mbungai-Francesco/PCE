@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { loadToast } from '@/lib/loadToast';
 import { getMissionDroneById } from '@/api/MissionDroneApi';
 import { useData } from '@/hook/useData';
+import { useJwt } from '@/hook/useJwt';
 
 export const FormPage = () => {
   const [formNum, setFormNum] = useState(1);
@@ -14,6 +15,7 @@ export const FormPage = () => {
   const generaleFormRef = useRef<GeneraleFormHandle>(null);
 
   const { missionData, setMissionData } = useData();
+  const { getJwt } = useJwt();
 
   useEffect(() => {
     if(progressRef.current){
@@ -63,7 +65,7 @@ export const FormPage = () => {
           </div>
         </div>
         <div className={cn('w-full min-h-10 bg-white rounded-b-xl py-7 px-8 text-black')}>
-          {(formNum === 1 && missionData?.id) && <MissionForm ref={missionFormRef} />}
+          {formNum === 1 && <MissionForm ref={missionFormRef} />}
           {formNum === 2 && <GeneraleForm ref={generaleFormRef} />}
           <div className='mt-4 flex justify-end space-x-4'>
             {formNum != 1 &&

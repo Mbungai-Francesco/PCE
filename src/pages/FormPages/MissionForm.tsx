@@ -3,7 +3,7 @@ import { cn } from "../../lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useImperativeHandle } from "react";
 
 import {
 	Form,
@@ -19,6 +19,7 @@ import type { MissionDrone } from "@/types";
 import { createMissionsDrones } from "@/api/MissionDroneApi";
 import { loadToast } from "@/lib/loadToast";
 import { useData } from "@/hook/useData";
+import { useJwt } from "@/hook/useJwt";
 
 const formSchema = z.object({
 	dateDebutVol: z.string().min(1, "Flight date is required"),
@@ -41,28 +42,43 @@ export interface MissionFormHandle {
 export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 	// const { initialData } = props;
   const { missionData, setMissionData } = useData();
-  
-  // Use prop data if provided, otherwise use context
-  // const data = initialData || missionData;
-  const data = missionData;
+  const { setJwt } = useJwt();
 
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			dateDebutVol: data?.dateDebutVol ? new Date(data.dateDebutVol).toISOString().split('T')[0] : "",
-			dateFinVol: data?.dateFinVol ? new Date(data.dateFinVol).toISOString().split('T')[0] : "",
-			typeMission: data?.typeMission || "",
-      capteurUtilise: data?.capteurUtilise || "",
-      statutValidation: data?.statutValidation || false,
-      motDePasse: data?.motDePasse || "",
-      motsCles: data?.motsCles || "",
-      nomProprietaire: data?.nomProprietaire || "",
-      emailProprietaire: data?.emailProprietaire || "",
-      entrepriseProprietaire: data?.entrepriseProprietaire || "",
+			dateDebutVol: missionData?.dateDebutVol ? new Date(missionData.dateDebutVol).toISOString().split('T')[0] : "",
+			dateFinVol: missionData?.dateFinVol ? new Date(missionData.dateFinVol).toISOString().split('T')[0] : "",
+			typeMission: missionData?.typeMission || "",
+      capteurUtilise: missionData?.capteurUtilise || "",
+      statutValidation: missionData?.statutValidation || false,
+      motDePasse: missionData?.motDePasse || "",
+      motsCles: missionData?.motsCles || "",
+      nomProprietaire: missionData?.nomProprietaire || "",
+      emailProprietaire: missionData?.emailProprietaire || "",
+      entrepriseProprietaire: missionData?.entrepriseProprietaire || "",
 		},
 	});
-  
+
+	// Reset form when missionData changes
+	useEffect(() => {
+		if (missionData) {
+			form.reset({
+				dateDebutVol: missionData.dateDebutVol ? new Date(missionData.dateDebutVol).toISOString().split('T')[0] : "",
+				dateFinVol: missionData.dateFinVol ? new Date(missionData.dateFinVol).toISOString().split('T')[0] : "",
+				typeMission: missionData.typeMission || "",
+				capteurUtilise: missionData.capteurUtilise || "",
+				statutValidation: missionData.statutValidation || false,
+				motDePasse: missionData.motDePasse || "",
+				motsCles: missionData.motsCles || "",
+				nomProprietaire: missionData.nomProprietaire || "",
+				emailProprietaire: missionData.emailProprietaire || "",
+				entrepriseProprietaire: missionData.entrepriseProprietaire || "",
+			});
+		}
+	}, [missionData, form]);
+
 	// 2. Define a submit handler.
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
@@ -86,6 +102,7 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
     onSuccess: (data) =>{
       loadToast('Mission Created', '', 3000, 'green')
       console.log("Mission Drone created successfully:", data);
+      setJwt(data.id || '')
       setMissionData(data);
     },
     onError: (error) =>{

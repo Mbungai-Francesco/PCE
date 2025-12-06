@@ -3,7 +3,7 @@ import { cn } from "../../lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useImperativeHandle } from "react";
 
 import {
 	Form,
@@ -18,6 +18,8 @@ import { useMutation } from "@tanstack/react-query";
 import type { MetaGenerales } from "@/types";
 import { loadToast } from "@/lib/loadToast";
 import { createMetaGenerales } from "@/api/MetaGeneralesApi";
+import { useData } from "@/hook/useData";
+import { useJwt } from "@/hook/useJwt";
 
 const formSchema = z.object({
 	titre: z.string().min(1, "Title is required"),
@@ -30,6 +32,8 @@ export interface GeneraleFormHandle {
 }
 
 export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
+	const { generaleData, setGeneraleData } = useData()
+	const { getJwt } = useJwt()
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -40,11 +44,31 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 		},
 	});
 
+	// Reset form when generaleData changes
+	useEffect(() => {
+		if (generaleData) {
+			form.reset({
+				titre: generaleData.titre || "",
+				resume: generaleData.resume || "",
+				categorieThematique: generaleData.categorieThematique || "",
+			});
+		}
+	}, [generaleData, form]);
+
 	// 2. Define a submit handler.
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
 		console.log(values);
+		const id = getJwt();
+		if(id){
+			const val : MetaGenerales = {
+				...values,
+				idMission : id
+			}
+			mutate(val);
+		}
+		
 	}
 
 	const { mutate } = useMutation({
@@ -55,6 +79,7 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 		onSuccess: (data) => {
 			console.log("Generales created successfully:", data);
 			loadToast("Generales Created", "", 1, "green");
+			setGeneraleData(data);
 		},
 		onError: (error) => {
 			loadToast("Error Creating Generales", "", 3000, "red");
