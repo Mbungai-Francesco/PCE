@@ -29,7 +29,7 @@ export const getMissionsDrones = async () => {
 export const getMissionDroneById = async (id : string) => {
     try{
         const res = await axios.get(`${link}/${route}/${id}`)
-        console.log("message", res.statusText);
+        console.log("message", res.statusText, " mission gotten");
         console.log(res.data.data);
         return res.data.data as MissionDrone
     }catch(error){

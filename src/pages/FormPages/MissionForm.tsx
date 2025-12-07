@@ -79,6 +79,26 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 		}
 	}, [missionData, form]);
 
+  const compareValues = (val: MissionDrone, missionData: MissionDrone | null): boolean => {
+    if (!missionData) return true;
+
+    const dateVol = new Date(missionData.dateDebutVol)
+    const dataFin = new Date(missionData.dateFinVol)
+    
+    return (
+      val.dateDebutVol.toISOString().split('T')[0] !== dateVol.toISOString().split('T')[0] ||
+      val.dateFinVol.toISOString().split('T')[0] !== dataFin.toISOString().split('T')[0] ||
+      val.typeMission !== missionData.typeMission ||
+      val.capteurUtilise !== missionData.capteurUtilise ||
+      val.statutValidation !== missionData.statutValidation ||
+      val.motDePasse !== missionData.motDePasse ||
+      val.motsCles !== missionData.motsCles ||
+      val.nomProprietaire !== missionData.nomProprietaire ||
+      val.emailProprietaire !== missionData.emailProprietaire ||
+      val.entrepriseProprietaire !== missionData.entrepriseProprietaire
+    );
+  };
+
 	// 2. Define a submit handler.
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
@@ -90,8 +110,7 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
       dateFinVol : new Date(values.dateFinVol),
     }
     console.log(val);
-
-    mutate(val);
+    if(compareValues(val, missionData)) mutate(val);
 	}
 
   const { mutate } = useMutation({

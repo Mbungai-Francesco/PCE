@@ -14,7 +14,7 @@ export const FormPage = () => {
   const missionFormRef = useRef<MissionFormHandle>(null);
   const generaleFormRef = useRef<GeneraleFormHandle>(null);
 
-  const { missionData, setMissionData } = useData();
+  const { setMissionData } = useData();
   const { getJwt } = useJwt();
 
   useEffect(() => {
@@ -48,6 +48,7 @@ export const FormPage = () => {
   useEffect(() =>{
     getMissionDroneById('9a999ab7-e2d0-4e1f-9ef4-3915bd15ad8b').then((res) => {
       console.log('Fetched Mission Drone:', res);
+      console.log('Date vol:', new Date(res.dateDebutVol).toISOString().split('T')[0]);
       setMissionData(res)
     })
   },[setMissionData])

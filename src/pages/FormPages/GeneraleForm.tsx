@@ -55,6 +55,17 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 		}
 	}, [generaleData, form]);
 
+
+	const compareValues = (val: MetaGenerales, missionData: MetaGenerales | null) : boolean => {
+		if(!missionData) return true;
+
+		return (
+			val.titre !== missionData.titre ||
+			val.resume !== missionData.resume ||
+			val.categorieThematique !== missionData.categorieThematique
+		)
+	}
+
 	// 2. Define a submit handler.
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
@@ -66,7 +77,7 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 				...values,
 				idMission : id
 			}
-			mutate(val);
+			if(compareValues(val, generaleData)) mutate(val);
 		}
 		
 	}
