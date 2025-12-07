@@ -6,5 +6,5 @@ export interface MetaAdmin {
     langue : string   
     SRS_CRSUtilise : string
     contraintesLegales : string
-    mission : MissionDrone
+    mission ?: MissionDrone
 }

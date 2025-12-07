@@ -84,7 +84,7 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 
 	const { mutate } = useMutation({
 		mutationFn: (val: MetaGenerales) => {
-			loadToast("Creating Mission", "", 0, "blue");
+			loadToast("Creating generales", "", 0, "blue");
 			return createMetaGenerales(val);
 		},
 		onSuccess: (data) => {

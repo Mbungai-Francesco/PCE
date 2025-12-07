@@ -10,5 +10,5 @@ export interface MetaTechniques{
     yMax            : number
     debut           ? : Date
     fin             ? : Date
-    mission : MissionDrone
+    mission ?: MissionDrone
 }

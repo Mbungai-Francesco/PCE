@@ -7,12 +7,14 @@ import { loadToast } from '@/lib/loadToast';
 import { getMissionDroneById } from '@/api/MissionDroneApi';
 import { useData } from '@/hook/useData';
 import { useJwt } from '@/hook/useJwt';
+import { TechForm, type TechFormHandle } from './TechForm';
 
 export const FormPage = () => {
-  const [formNum, setFormNum] = useState(1);
+  const [formNum, setFormNum] = useState(3);
   const progressRef = useRef<HTMLDivElement | null>(null);
   const missionFormRef = useRef<MissionFormHandle>(null);
   const generaleFormRef = useRef<GeneraleFormHandle>(null);
+  const techFormRef = useRef<TechFormHandle>(null);
 
   const { setMissionData } = useData();
   const { getJwt } = useJwt();
@@ -68,6 +70,7 @@ export const FormPage = () => {
         <div className={cn('w-full min-h-10 bg-white rounded-b-xl py-7 px-8 text-black')}>
           {formNum === 1 && <MissionForm ref={missionFormRef} />}
           {formNum === 2 && <GeneraleForm ref={generaleFormRef} />}
+          {formNum === 3 && <TechForm ref={techFormRef} />}
           <div className='mt-4 flex justify-end space-x-4'>
             {formNum != 1 &&
              <Button 
