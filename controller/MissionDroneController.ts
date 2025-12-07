@@ -3,17 +3,16 @@ import type { Request, Response } from 'express';
 
 export const CreateMissionDrone = async (req: Request, res: Response) =>{
     try{
-        const { dateDebutVol, dateFinVol, typeMission, capteurUtilise, statutValidation, motDePasse, motsCles, nomProprietaire, emailProprietaire, entrepriseProprietaire } = req.body;
+        const { dateDebutVol, dateFinVol, capteurUtilise, motDePasse, motsCles, nomProprietaire, emailProprietaire, entrepriseProprietaire } = req.body;
 
-        if (!dateDebutVol || !dateFinVol || !typeMission || !capteurUtilise || !statutValidation || !motDePasse || !motsCles || !nomProprietaire || !emailProprietaire || !entrepriseProprietaire) {
+        if (!dateDebutVol || !dateFinVol || !capteurUtilise || !motDePasse || !motsCles || !nomProprietaire || !emailProprietaire || !entrepriseProprietaire) {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
         const newMission = await db.missionDrone.create({
             data: {
-                dateDebutVol: new Date(dateDebutVol),
-                dateFinVol: new Date(dateFinVol),
-                ...req.body
+                ...req.body,
+                statutValidation: false
             },
         });
 

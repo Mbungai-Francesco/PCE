@@ -22,14 +22,11 @@ export const CreateMetaTechniques = async (req: Request, res: Response) => {
 
     const meta = await db.metadonneesTechniques.create({
       data: {
-        idMission,
-        datePublication: new Date(datePublication),
+        ...req.body,
         xMin: Number(xMin),
         yMin: Number(yMin),
         xMax: Number(xMax),
         yMax: Number(yMax),
-        debut: debut ? new Date(debut) : undefined,
-        fin: fin ? new Date(fin) : undefined,
         mission: { connect: { id: idMission } },
       },
     });
