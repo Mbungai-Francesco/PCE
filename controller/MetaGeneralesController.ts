@@ -26,7 +26,6 @@ export const CreateMetaGenerales = async (req: Request, res: Response) => {
 				titre,
 				resume,
 				categorieThematique,
-				mission: { connect: { id: idMission } },
 			},
 		});
 

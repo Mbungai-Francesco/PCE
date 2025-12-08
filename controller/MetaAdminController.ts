@@ -26,7 +26,6 @@ export const CreateMetaAdmin = async (req: Request, res: Response) => {
 				langue,
 				SRS_CRSUtilise,
 				contraintesLegales,
-				mission: { connect: { id: idMission } },
 			},
 		});
 

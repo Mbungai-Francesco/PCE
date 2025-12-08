@@ -27,7 +27,6 @@ export const CreateMetaTechniques = async (req: Request, res: Response) => {
         yMin: Number(yMin),
         xMax: Number(xMax),
         yMax: Number(yMax),
-        mission: { connect: { id: idMission } },
       },
     });
 
