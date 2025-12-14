@@ -10,7 +10,7 @@ interface JwtStorage {
 const JWT_KEY = 'jwt_token';
 
 export const useJwt = (): JwtStorage => {
-    const [jwt, setJwtState] = useState<string | null>(null);
+    const setJwtState = useState<string | null>(null)[1];
 
     useEffect(() => {
         const token = sessionStorage.getItem(JWT_KEY);
