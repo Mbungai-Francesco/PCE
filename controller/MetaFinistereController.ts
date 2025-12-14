@@ -42,7 +42,6 @@ export const CreateMissionFinistere = async (req: Request, res: Response) =>{
                 ...generalesExist,
                 ...techniquesExist,
                 ...adminExist,
-                ...req.body,
             },
         });
 
@@ -85,6 +84,24 @@ export const GetMissionFinistereById = async (req: Request, res: Response) =>{
     }
 }
 
+export const GetMissionFinistereByIdMission = async (req: Request, res: Response) =>{
+    try{
+        const { idMission } = req.params;
+        const mission =  await db.metadonnees_finistere.findUnique({
+            where: { idMission: idMission },
+        });
+
+        if(!mission){
+            return res.status(404).json({ message: 'Finistere Mission not found' });
+        }
+
+        return res.status(200).json({message : "Finistere Mission found", data: mission});
+    }catch(error: any){
+        console.log(error.message);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
 export const DeleteMissionFinistereById = async (req: Request, res: Response) =>{
     try{
         const { id } = req.params;
@@ -103,19 +120,51 @@ export const DeleteMissionFinistereById = async (req: Request, res: Response) =>
     }
 }
 
-export const UpdateMissionFinistereById = async (req: Request, res: Response) =>{
+export const UpdateMissionFinistereByIdMission = async (req: Request, res: Response) =>{
     try{
-        const { id } = req.params;
-        const updatedMission =  await db.metadonnees_finistere.update({
-            where: { id: id },
-            data: req.body,
+        // const { idMission } = req.body;
+        const { idMission } = req.params;
+
+        if (!idMission) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        // Get existing mission
+		const mission = await db.missionDrone.findUnique({ where: { id: idMission } });
+		if (!mission) {
+			return res.status(404).json({ message: 'Referenced MissionDrone not found' });
+		}
+
+        const generalesExist = await db.metadonneesGenerales.findUnique({ where: { idMission } });
+        if (!generalesExist) {
+            return res.status(404).json({ message: 'MetadonneesGenerales not found' });
+        }
+        
+        const techniquesExist = await db.metadonneesTechniques.findUnique({ where: { idMission } });
+        if (!techniquesExist) {
+            return res.status(404).json({ message: 'MetadonneesTechniques not found' });
+        }
+
+        const adminExist = await db.metadonneesAdmin.findUnique({ where: { idMission } });
+        if (!adminExist) {
+            return res.status(404).json({ message: 'MetadonneesAdmin not found' });
+        }
+
+        const updatedFinistere =  await db.metadonnees_finistere.update({
+            where: { idMission: idMission },
+            data: {
+                ...mission,
+                ...generalesExist,
+                ...techniquesExist,
+                ...adminExist,
+            },
         });
 
-        if(!updatedMission){
+        if(!updatedFinistere){
             return res.status(404).json({ message: 'Finistere Mission not found' });
         }
 
-        return res.status(200).json({message : "Finistere Mission updated", data: updatedMission});
+        return res.status(200).json({message : "Finistere Mission updated", data: updatedFinistere});
     }catch(error: any){
         console.log(error.message);
         return res.status(500).json({ message: 'Internal Server Error' });

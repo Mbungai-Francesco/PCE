@@ -46,6 +46,7 @@ export const GetMissionDroneById = async (req: Request, res: Response) =>{
                 technique: true,
                 generale: true,
                 admin: true,
+                missionFinistere: true,
             },
         });
 
