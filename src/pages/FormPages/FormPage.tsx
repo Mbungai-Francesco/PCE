@@ -8,10 +8,10 @@ import { getMissionDroneById } from '@/api/MissionDroneApi';
 import { useData } from '@/hook/useData';
 import { useJwt } from '@/hook/useJwt';
 import { TechForm, type TechFormHandle } from './TechForm';
-import type { AdminFormHandle } from './AdminPage';
+import { AdminForm, type AdminFormHandle } from './AdminPage';
 
 export const FormPage = () => {
-  const [formNum, setFormNum] = useState(1);
+  const [formNum, setFormNum] = useState(4);
   const progressRef = useRef<HTMLDivElement | null>(null);
   const missionFormRef = useRef<MissionFormHandle>(null);
   const generaleFormRef = useRef<GeneraleFormHandle>(null);
@@ -89,6 +89,7 @@ export const FormPage = () => {
           {formNum === 1 && <MissionForm ref={missionFormRef} />}
           {formNum === 2 && <GeneraleForm ref={generaleFormRef} />}
           {formNum === 3 && <TechForm ref={techFormRef} />}
+          {formNum === 4 && <AdminForm ref={adminFormRef} />}
           <div className='mt-4 flex justify-end space-x-4'>
             {formNum != 1 &&
              <Button 
