@@ -8,16 +8,18 @@ import { getMissionDroneById } from '@/api/MissionDroneApi';
 import { useData } from '@/hook/useData';
 import { useJwt } from '@/hook/useJwt';
 import { TechForm, type TechFormHandle } from './TechForm';
+import type { AdminFormHandle } from './AdminPage';
 
 export const FormPage = () => {
-  const [formNum, setFormNum] = useState(3);
+  const [formNum, setFormNum] = useState(1);
   const progressRef = useRef<HTMLDivElement | null>(null);
   const missionFormRef = useRef<MissionFormHandle>(null);
   const generaleFormRef = useRef<GeneraleFormHandle>(null);
   const techFormRef = useRef<TechFormHandle>(null);
+  const adminFormRef = useRef<AdminFormHandle>(null);
 
-  const { setMissionData } = useData();
-  const { getJwt } = useJwt();
+  const { setMissionData, setGeneraleData, setTechData, setAdminData } = useData();
+  const { getJwt, hasJwt } = useJwt();
 
   useEffect(() => {
     if(progressRef.current){
@@ -35,12 +37,23 @@ export const FormPage = () => {
       if (!isValid) return
       else loadToast('Mission Created', '', 3000, 'green')
     }
-    if (formNum === 2 && generaleFormRef.current) {
+    // Add similar checks for other forms (formNum === 2, etc.)
+    else if (formNum === 2 && generaleFormRef.current) {
       const isValid = await generaleFormRef.current.submit();
       if (!isValid) return;
-      else loadToast('Generales Created', '', 3000, 'green')
+      else loadToast('Generales data Created', '', 3000, 'green')
+    }else if (formNum === 3 && techFormRef.current) {
+      const isValid = await techFormRef.current.submit();
+      if (!isValid) return;
+      else loadToast('Technical data Created', '', 3000, 'green')
+    }else if (formNum === 4 && adminFormRef.current) {
+      const isValid = await adminFormRef.current.submit();
+      if (!isValid) return;
+      else {
+        loadToast('Admin data Created', '', 3000, 'green')
+        window.location.href = 'https://projet-commande-entreprise-16.netlify.app/';
+      }
     }
-    // Add similar checks for other forms (formNum === 2, etc.)
     
     if(formNum < 4){
       setFormNum(formNum + 1);
@@ -48,12 +61,17 @@ export const FormPage = () => {
   }
 
   useEffect(() =>{
-    getMissionDroneById('9a999ab7-e2d0-4e1f-9ef4-3915bd15ad8b').then((res) => {
-      console.log('Fetched Mission Drone:', res);
-      console.log('Date vol:', new Date(res.dateDebutVol).toISOString().split('T')[0]);
-      setMissionData(res)
-    })
-  },[setMissionData])
+    if(hasJwt()){
+      getMissionDroneById(getJwt() || '').then((res) => {
+        console.log('Fetched Mission Drone:', res);
+        console.log('Date vol:', new Date(res.dateDebutVol).toISOString().split('T')[0]);
+        setMissionData(res)
+        if(res.generale) setGeneraleData(res.generale)
+        if(res.technique) setTechData(res.technique)
+        if(res.admin) setAdminData(res.admin)
+      })
+    }
+  },[getJwt()])
 
   return (
     <div className={'bg-linear-to-br from-blue-400 to-purple-700 min-h-screen w-full pt-10'}>

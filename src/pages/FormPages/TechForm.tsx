@@ -23,10 +23,10 @@ import { useJwt } from "@/hook/useJwt";
 import { createMetaTechniques } from "@/api/MetaTechniquesApi";
 
 const formSchema = z.object({
-	xMin: z.number().min(0, "X Min is required"),
-	xMax: z.number().min(0, "X Max is required"),
-	yMin: z.number().min(0, "Y Min is required"),
-	yMax: z.number().min(0, "Y Max is required"),
+	xMin: z.string(),
+	xMax: z.string(),
+	yMin: z.string(),
+	yMax: z.string(),
 });
 
 export interface TechFormHandle {
@@ -40,10 +40,10 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			xMin: techData?.xMin || 0,
-			xMax: techData?.xMax || 0,
-			yMin: techData?.yMin || 0,
-			yMax: techData?.yMax || 0,
+			xMin: techData?.xMin ? String(techData?.xMin) : '0',
+			xMax: techData?.xMax ? String(techData?.xMax) : '0',
+			yMin: techData?.yMin ? String(techData?.yMin) : '0',
+			yMax: techData?.yMax ? String(techData?.yMax) : '0',
 		},
 	});
 
@@ -51,10 +51,10 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 	useEffect(() => {
 		if (techData) {
 			form.reset({
-				xMin: techData.xMin || 0,
-				xMax: techData.xMax || 0,
-				yMin: techData.yMin || 0,
-				yMax: techData.yMax || 0,
+				xMin: techData?.xMin ? String(techData?.xMin) : '0',
+				xMax: techData?.xMax ? String(techData?.xMax) : '0',
+				yMin: techData?.yMin ? String(techData?.yMin) : '0',
+				yMax: techData?.yMax ? String(techData?.yMax) : '0',
 			});
 		}
 	}, [techData, form]);
@@ -82,9 +82,15 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 		if (id) {
 			const val: MetaTechniques = {
 				...values,
+                xMin: Number(values.xMin),
+                xMax: Number(values.xMax),
+                yMin: Number(values.yMin),
+                yMax: Number(values.yMax),
 				idMission: id,
 				datePublication: new Date(),
 			};
+            console.log(val);
+            
 			if (compareValues(val, techData)) mutate(val);
 		}
 	}
@@ -108,10 +114,21 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 	// Expose submit method to parent
 	useImperativeHandle(ref, () => ({
 		submit: async () => {
-			const isValid = await form.trigger();
+			let isValid = await form.trigger();
+            const values = form.getValues();
+
+            // ? checking to make sure no coordinate is zero
+            isValid = (!Number(values.xMax) || !Number(values.xMin) || !Number(values.yMax) || !Number(values.yMin ))?  false : true; 
+            console.log(values);
 			if (isValid) {
 				form.handleSubmit(onSubmit)();
-			}
+			}else{
+                form.setError("xMin", { type: "manual", message: "X Min is required and cannot be zero" });
+                form.setError("xMax", { type: "manual", message: "X Max is required and cannot be zero" });
+                form.setError("yMin", { type: "manual", message: "Y Min is required and cannot be zero" });
+                form.setError("yMax", { type: "manual", message: "Y Max is required and cannot be zero" });
+            }
+            
 			return isValid;
 		},
 	}));

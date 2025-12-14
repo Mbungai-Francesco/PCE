@@ -1,3 +1,5 @@
+import type { MetaAdmin, MetaGenerales, MetaTechniques } from "."
+
 export  interface MissionDrone{
     id ?: string
     dateDebutVol : Date // format local ISO string ! YYYY-MM-DD
@@ -10,7 +12,7 @@ export  interface MissionDrone{
     nomProprietaire : string       
     emailProprietaire : string     
     entrepriseProprietaire : string
-    // admin                  
-    // generale               
-    // technique    
+    admin ?: MetaAdmin | null          
+    generale ?: MetaGenerales | null            
+    technique ?: MetaTechniques | null    
 }
