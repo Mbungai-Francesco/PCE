@@ -1,7 +1,7 @@
 import axios from "axios";
 import { link } from ".";
 
-const route : string = "api/mission"
+const route : string = "api/metafinistere"
 
 export const createMissionsFinistere = async (idMission : string) => {
     try{

@@ -14,7 +14,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useMutation } from "@tanstack/react-query";
 import type { MetaAdmin } from "@/types";
 import { loadToast } from "@/lib/loadToast";
 import { useData } from "@/hook/useData";
@@ -87,9 +86,9 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 						console.log("Admin data created successfully:", data);
 						loadToast("Admin data Created", "", 1, "green");
 						setAdminData(data);
-						createMissionsFinistere(getJwt() || "").then((res) =>{
-                            
-                        })
+						createMissionsFinistere(data.idMission).then(() => {
+                            window.location.href = 'https://projet-commande-entreprise-16.netlify.app/';
+                        }) 
 					})
 					.catch((error) => {
 						loadToast("Error Creating Admin data", "", 3000, "red");
@@ -98,23 +97,6 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 			}
 		}
 	}
-
-	const { mutate } = useMutation({
-		mutationFn: (val: MetaAdmin) => {
-			loadToast("Creating admin data", "", 0, "blue");
-			return createMetaAdmin(val);
-		},
-		onSuccess: (data) => {
-			console.log("Admin data created successfully:", data);
-			loadToast("Admin data Created", "", 1, "green");
-			setAdminData(data);
-			createMissionsFinistere(getJwt() || "");
-		},
-		onError: (error) => {
-			loadToast("Error Creating Admin data", "", 3000, "red");
-			console.error("Error creating Admin data:", error);
-		},
-	});
 
 	// Expose submit method to parent
 	useImperativeHandle(ref, () => ({
@@ -131,7 +113,7 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 				<div className={cn("space-y-2")}>
-					<h1 className={cn("text-2xl font-bold")}>Mission generales</h1>
+					<h1 className={cn("text-2xl font-bold")}>Donnee admin</h1>
 					<p className="text-black/70">
 						Informations administratives du vol de drone
 					</p>

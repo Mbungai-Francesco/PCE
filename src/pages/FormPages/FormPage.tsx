@@ -49,10 +49,7 @@ export const FormPage = () => {
     }else if (formNum === 4 && adminFormRef.current) {
       const isValid = await adminFormRef.current.submit();
       if (!isValid) return;
-      else {
-        loadToast('Admin data Created', '', 3000, 'green')
-        window.location.href = 'https://projet-commande-entreprise-16.netlify.app/';
-      }
+      else loadToast('Admin data Created', '', 3000, 'green')
     }
     
     if(formNum < 4){
