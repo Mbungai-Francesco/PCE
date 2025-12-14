@@ -1,4 +1,4 @@
-import type { MetaAdmin, MetaGenerales, MetaTechniques } from "."
+import type { MetaAdmin, MetaGenerales, MetaTechniques, MissionFinistere } from "."
 
 export  interface MissionDrone{
     id ?: string
@@ -15,4 +15,5 @@ export  interface MissionDrone{
     admin ?: MetaAdmin | null          
     generale ?: MetaGenerales | null            
     technique ?: MetaTechniques | null    
+    finistere ?: MissionFinistere | null
 }

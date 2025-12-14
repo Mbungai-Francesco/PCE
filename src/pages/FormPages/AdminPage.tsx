@@ -20,6 +20,7 @@ import { loadToast } from "@/lib/loadToast";
 import { useData } from "@/hook/useData";
 import { useJwt } from "@/hook/useJwt";
 import { createMetaAdmin } from "@/api/MetaAdminApi";
+import { createMissionsFinistere } from "@/api/MetaFinistereApi";
 
 const formSchema = z.object({
 	langue: z.string().min(3, "Language is required"),
@@ -79,7 +80,22 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 				...values,
 				idMission: id,
 			};
-			if (compareValues(val, adminData)) mutate(val);
+			if (compareValues(val, adminData)) {
+				loadToast("Creating admin data", "", 0, "blue");
+				createMetaAdmin(val)
+					.then((data) => {
+						console.log("Admin data created successfully:", data);
+						loadToast("Admin data Created", "", 1, "green");
+						setAdminData(data);
+						createMissionsFinistere(getJwt() || "").then((res) =>{
+                            
+                        })
+					})
+					.catch((error) => {
+						loadToast("Error Creating Admin data", "", 3000, "red");
+						console.error("Error creating Admin data:", error);
+					});
+			}
 		}
 	}
 
@@ -92,6 +108,7 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 			console.log("Admin data created successfully:", data);
 			loadToast("Admin data Created", "", 1, "green");
 			setAdminData(data);
+			createMissionsFinistere(getJwt() || "");
 		},
 		onError: (error) => {
 			loadToast("Error Creating Admin data", "", 3000, "red");
