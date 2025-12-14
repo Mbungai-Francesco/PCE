@@ -42,6 +42,11 @@ export const GetMissionDroneById = async (req: Request, res: Response) =>{
         const { id } = req.params;
         const mission =  await db.missionDrone.findUnique({
             where: { id: id },
+            include: {
+                technique: true,
+                generale: true,
+                admin: true,
+            },
         });
 
         if(!mission){

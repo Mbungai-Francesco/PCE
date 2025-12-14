@@ -22,6 +22,7 @@ model MissionDrone {
   admin                  MetadonneesAdmin?
   generale               MetadonneesGenerales?
   technique              MetadonneesTechniques?
+  missionFinistere       metadonnees_finistere?
 }
 
 model MetadonneesGenerales {
@@ -59,4 +60,42 @@ model MetadonneesAdmin {
   mission            MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
 
   @@unique([id, idMission])
+}
+
+model metadonnees_finistere {
+  // ? Mission Drone details
+  id                     String                 @id @default(uuid()) @db.Uuid
+  dateDebutVol           DateTime
+  dateFinVol             DateTime
+  typeMission            String?
+  capteurUtilise         String
+  statutValidation       Boolean
+  motDePasse             String
+  motsCles               String
+  nomProprietaire        String
+  emailProprietaire      String
+  entrepriseProprietaire String
+
+  // ? Foreign Key to MissionDrone
+  idMission           String       @unique @db.Uuid
+  mission             MissionDrone @relation(fields: [idMission], references: [id], onDelete: Cascade)
+
+  // ? Metadonnees Generales
+  titre               String
+  resume              String
+  categorieThematique String
+
+  // ? Metadonnees Techniques
+  datePublication DateTime
+  xMin            Float
+  yMin            Float
+  xMax            Float
+  yMax            Float
+  debut           DateTime?
+  fin             DateTime?
+
+  // ? Metadonnees Admin
+  langue             String
+  SRS_CRSUtilise     String
+  contraintesLegales String
 }

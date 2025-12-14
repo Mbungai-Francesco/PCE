@@ -7,6 +7,8 @@ import MissionRoutes from '../routes/MissionDroneRoutes';
 import AdminRoutes from '../routes/MetaAdminRoutes';
 import TechRoutes from '../routes/MetaTechniquesRoutes';
 import GeneralesRoutes from '../routes/MetaGeneralesRoutes';
+import FinistereRoutes from '../routes/MetaFinistereRoutes';
+
 
 const app = express();
 
@@ -22,7 +24,8 @@ app.use(
   MissionRoutes,
   AdminRoutes,
   TechRoutes,
-  GeneralesRoutes
+  GeneralesRoutes,
+  FinistereRoutes
 )
 
 app.get('*', (req: Request, res: Response) => {
