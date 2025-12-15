@@ -45,6 +45,16 @@ export const CreateMissionFinistere = async (req: Request, res: Response) =>{
             },
         });
 
+        // Compute geometry from centroid of bounding box and update the record
+        const x_centro = (techniquesExist.xMin + techniquesExist.xMax) / 2;
+        const y_centro = (techniquesExist.yMin + techniquesExist.yMax) / 2;
+
+        await db.$executeRaw`
+            UPDATE metadonnees_finistere
+            SET geometry = ST_SetSRID(ST_MakePoint(${x_centro}, ${y_centro}), 4326)
+            WHERE id = ${newMissionFinistere.id}::uuid
+        `;
+
         if(!newMissionFinistere){
             return res.status(500).json({ message: 'Failed to create mission finistere' });
         }

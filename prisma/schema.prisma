@@ -98,4 +98,6 @@ model metadonnees_finistere {
   langue             String
   SRS_CRSUtilise     String
   contraintesLegales String
+
+  geometry  Unsupported("geometry")?
 }
