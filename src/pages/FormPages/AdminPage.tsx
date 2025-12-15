@@ -87,7 +87,7 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 						loadToast("Admin data Created", "", 1, "green");
 						setAdminData(data);
 						createMissionsFinistere(data.idMission).then(() => {
-                            window.location.href = 'https://projet-commande-entreprise-16.netlify.app/';
+                            window.location.href = 'https://cerema-groupe-16.netlify.app/';
                         }) 
 					})
 					.catch((error) => {

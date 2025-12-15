@@ -3,7 +3,6 @@ import { cn } from '@/lib/utils'
 import { MissionForm, type MissionFormHandle } from './MissionForm';
 import { GeneraleForm, type GeneraleFormHandle } from './GeneraleForm';
 import { Button } from '@/components/ui/button';
-import { loadToast } from '@/lib/loadToast';
 import { getMissionDroneById } from '@/api/MissionDroneApi';
 import { useData } from '@/hook/useData';
 import { useJwt } from '@/hook/useJwt';
@@ -35,21 +34,17 @@ export const FormPage = () => {
       const isValid = await missionFormRef.current.submit();
       
       if (!isValid) return
-      else loadToast('Mission Created', '', 3000, 'green')
     }
     // Add similar checks for other forms (formNum === 2, etc.)
     else if (formNum === 2 && generaleFormRef.current) {
       const isValid = await generaleFormRef.current.submit();
       if (!isValid) return;
-      else loadToast('Generales data Created', '', 3000, 'green')
     }else if (formNum === 3 && techFormRef.current) {
       const isValid = await techFormRef.current.submit();
       if (!isValid) return;
-      else loadToast('Technical data Created', '', 3000, 'green')
     }else if (formNum === 4 && adminFormRef.current) {
       const isValid = await adminFormRef.current.submit();
       if (!isValid) return;
-      else loadToast('Admin data Created', '', 3000, 'green')
     }
     
     if(formNum < 4){
