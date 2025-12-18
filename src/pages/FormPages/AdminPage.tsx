@@ -87,8 +87,8 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 						loadToast("Admin data Created", "", 1, "green");
 						setAdminData(data);
 						createMissionsFinistere(data.idMission).then(() => {
-                            window.location.href = 'https://cerema-groupe-16.netlify.app/';
-                        }) 
+							window.location.href = "https://cerema-groupe-16.netlify.app/";
+						});
 					})
 					.catch((error) => {
 						loadToast("Error Creating Admin data", "", 3000, "red");
@@ -114,16 +114,23 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 				<div className={cn("space-y-2")}>
 					<h1 className={cn("text-2xl font-bold")}>Donnee admin</h1>
-					<p className="text-black/70">
-						Informations administratives du vol de drone
-					</p>
+					<div>
+						<p className="text-black/70">
+							Informations administratives du vol de drone
+						</p>
+						<p className="text-black/70 text-sm">
+							<span className="red-star">*</span> indicates required fields
+						</p>
+					</div>
 				</div>
 				<FormField
 					control={form.control}
 					name="langue"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Langue</FormLabel>
+							<FormLabel>
+								Langue <span className="red-star">*</span>
+							</FormLabel>
 							<FormControl>
 								<Input placeholder="Enter mission langue" {...field} />
 							</FormControl>
@@ -136,7 +143,9 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 					name="SRS_CRSUtilise"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>SRS CRS Utilise</FormLabel>
+							<FormLabel>
+								SRS CRS Utilise <span className="red-star">*</span>
+							</FormLabel>
 							<FormControl>
 								<Input placeholder="Enter mission SRS CRS Utilise" {...field} />
 							</FormControl>
@@ -149,7 +158,10 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 					name="contraintesLegales"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Contraintes Légales</FormLabel>
+							<FormLabel>
+								Contraintes Légales 
+								<span className="red-star h-fit">*</span>
+							</FormLabel>
 							<FormControl>
 								<Input placeholder="Enter legal constraints" {...field} />
 							</FormControl>

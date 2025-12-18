@@ -115,16 +115,21 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 				<div className={cn("space-y-2")}>
 					<h1 className={cn("text-2xl font-bold")}>Mission generales</h1>
-					<p className="text-black/70">
-						Informations generales du vol de drone
-					</p>
+					<div>
+						<p className="text-black/70">Informations generales du vol de drone</p>
+						<p className="text-black/70 text-sm">
+							<span className="red-star">*</span> indicates required fields
+						</p>
+					</div>
 				</div>
 				<FormField
 					control={form.control}
 					name="titre"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Titre</FormLabel>
+							<FormLabel>
+								Titre <span className="red-star">*</span>
+							</FormLabel>
 							<FormControl>
 								<Input placeholder="Enter mission title" {...field} />
 							</FormControl>
@@ -137,7 +142,9 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 					name="resume"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Résumé</FormLabel>
+							<FormLabel>
+								Résumé <span className="red-star">*</span>
+							</FormLabel>
 							<FormControl>
 								<Input placeholder="Enter mission summary" {...field} />
 							</FormControl>
@@ -150,7 +157,9 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 					name="categorieThematique"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Catégorie Thématique</FormLabel>
+							<FormLabel>
+								Catégorie Thématique <span className="red-star">*</span>
+							1</FormLabel>
 							<FormControl>
 								<Input placeholder="Enter thematic category" {...field} />
 							</FormControl>

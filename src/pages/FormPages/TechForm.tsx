@@ -40,10 +40,10 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			xMin: techData?.xMin ? String(techData?.xMin) : '0',
-			xMax: techData?.xMax ? String(techData?.xMax) : '0',
-			yMin: techData?.yMin ? String(techData?.yMin) : '0',
-			yMax: techData?.yMax ? String(techData?.yMax) : '0',
+			xMin: techData?.xMin ? String(techData?.xMin) : "0",
+			xMax: techData?.xMax ? String(techData?.xMax) : "0",
+			yMin: techData?.yMin ? String(techData?.yMin) : "0",
+			yMax: techData?.yMax ? String(techData?.yMax) : "0",
 		},
 	});
 
@@ -51,10 +51,10 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 	useEffect(() => {
 		if (techData) {
 			form.reset({
-				xMin: techData?.xMin ? String(techData?.xMin) : '0',
-				xMax: techData?.xMax ? String(techData?.xMax) : '0',
-				yMin: techData?.yMin ? String(techData?.yMin) : '0',
-				yMax: techData?.yMax ? String(techData?.yMax) : '0',
+				xMin: techData?.xMin ? String(techData?.xMin) : "0",
+				xMax: techData?.xMax ? String(techData?.xMax) : "0",
+				yMin: techData?.yMin ? String(techData?.yMin) : "0",
+				yMax: techData?.yMax ? String(techData?.yMax) : "0",
 			});
 		}
 	}, [techData, form]);
@@ -82,15 +82,15 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 		if (id) {
 			const val: MetaTechniques = {
 				...values,
-                xMin: Number(values.xMin),
-                xMax: Number(values.xMax),
-                yMin: Number(values.yMin),
-                yMax: Number(values.yMax),
+				xMin: Number(values.xMin),
+				xMax: Number(values.xMax),
+				yMin: Number(values.yMin),
+				yMax: Number(values.yMax),
 				idMission: id,
 				datePublication: new Date(),
 			};
-            console.log(val);
-            
+			console.log(val);
+
 			if (compareValues(val, techData)) mutate(val);
 		}
 	}
@@ -115,20 +115,38 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 	useImperativeHandle(ref, () => ({
 		submit: async () => {
 			let isValid = await form.trigger();
-            const values = form.getValues();
+			const values = form.getValues();
 
-            // ? checking to make sure no coordinate is zero
-            isValid = (!Number(values.xMax) || !Number(values.xMin) || !Number(values.yMax) || !Number(values.yMin ))?  false : true; 
-            console.log(values);
+			// ? checking to make sure no coordinate is zero
+			isValid =
+				!Number(values.xMax) ||
+				!Number(values.xMin) ||
+				!Number(values.yMax) ||
+				!Number(values.yMin)
+					? false
+					: true;
+			console.log(values);
 			if (isValid) {
 				form.handleSubmit(onSubmit)();
-			}else{
-                form.setError("xMin", { type: "manual", message: "X Min is required and cannot be zero" });
-                form.setError("xMax", { type: "manual", message: "X Max is required and cannot be zero" });
-                form.setError("yMin", { type: "manual", message: "Y Min is required and cannot be zero" });
-                form.setError("yMax", { type: "manual", message: "Y Max is required and cannot be zero" });
-            }
-            
+			} else {
+				form.setError("xMin", {
+					type: "manual",
+					message: "X Min is required and cannot be zero",
+				});
+				form.setError("xMax", {
+					type: "manual",
+					message: "X Max is required and cannot be zero",
+				});
+				form.setError("yMin", {
+					type: "manual",
+					message: "Y Min is required and cannot be zero",
+				});
+				form.setError("yMax", {
+					type: "manual",
+					message: "Y Max is required and cannot be zero",
+				});
+			}
+
 			return isValid;
 		},
 	}));
@@ -138,9 +156,15 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 				<div className={cn("space-y-2")}>
 					<h1 className={cn("text-2xl font-bold")}>Mission Techniques</h1>
-					<p className="text-black/70">
-						Informations techniques du vol de drone
-					</p>
+					<div>
+						<p className="text-black/70">
+							{" "}
+							Informations techniques du vol de drone
+						</p>
+						<p className="text-black/70 text-sm">
+							<span className="red-star">*</span> indicates required fields
+						</p>
+					</div>
 				</div>
 				<div className="grid grid-cols-2 gap-4">
 					<FormField
@@ -148,7 +172,9 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 						name="xMin"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>X Min</FormLabel>
+								<FormLabel>
+									X Min <span className="red-star">*</span>
+								</FormLabel>
 								<FormControl>
 									<Input type="number" {...field} />
 								</FormControl>
@@ -164,7 +190,9 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 						name="xMax"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>X Max</FormLabel>
+								<FormLabel>
+									X Max <span className="red-star">*</span>
+								</FormLabel>
 								<FormControl>
 									<Input type="number" {...field} />
 								</FormControl>
@@ -182,7 +210,9 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 						name="yMin"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Y Min</FormLabel>
+								<FormLabel>
+									Y Min <span className="red-star">*</span>
+								</FormLabel>
 								<FormControl>
 									<Input type="number" {...field} />
 								</FormControl>
@@ -198,7 +228,9 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 						name="yMax"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Y Max</FormLabel>
+								<FormLabel>
+									Y Max <span className="red-star">*</span>
+								</FormLabel>
 								<FormControl>
 									<Input type="number" {...field} />
 								</FormControl>
