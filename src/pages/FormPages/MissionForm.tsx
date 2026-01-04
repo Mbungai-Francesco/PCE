@@ -8,6 +8,7 @@ import { forwardRef, useEffect, useImperativeHandle } from "react";
 import {
 	Form,
 	FormControl,
+	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -299,6 +300,7 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 							<FormControl>
 								<Input placeholder="Keywords for data" {...field} />
 							</FormControl>
+              <FormDescription>Example: plage, militaire</FormDescription>
 							<FormMessage />
 						</FormItem>
 					)}

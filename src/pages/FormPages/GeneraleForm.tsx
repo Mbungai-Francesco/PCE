@@ -159,7 +159,7 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 						<FormItem>
 							<FormLabel>
 								Catégorie Thématique <span className="red-star">*</span>
-							1</FormLabel>
+							</FormLabel>
 							<FormControl>
 								<Input placeholder="Enter thematic category" {...field} />
 							</FormControl>

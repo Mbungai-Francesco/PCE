@@ -3,7 +3,8 @@ import { cn } from "../../lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { forwardRef, useEffect, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import L  from "leaflet"
 
 import {
 	Form,
@@ -33,9 +34,22 @@ export interface TechFormHandle {
 	submit: () => Promise<boolean>;
 }
 
+// Fix for default marker icons in Leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
 export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 	const { techData, setTechData } = useData();
 	const { getJwt } = useJwt();
+	const mapRef = useRef<L.Map | null>(null);
+	const mapContainerRef = useRef<HTMLDivElement | null>(null);
+	const rectangleRef = useRef<L.Rectangle | null>(null);
+	const markersRef = useRef<L.Marker[]>([]);
+
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -58,6 +72,100 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 			});
 		}
 	}, [techData, form]);
+
+	// Watch coordinate values for map updates
+	const xMin = form.watch("xMin");
+	const xMax = form.watch("xMax");
+	const yMin = form.watch("yMin");
+	const yMax = form.watch("yMax");
+
+	// Initialize map
+	useEffect(() => {
+		if (mapContainerRef.current && !mapRef.current) {
+			mapRef.current = L.map(mapContainerRef.current).setView([48.8566, 2.3522], 5);
+			
+			L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+			}).addTo(mapRef.current);
+		}
+
+		return () => {
+			if (mapRef.current) {
+				mapRef.current.remove();
+				mapRef.current = null;
+			}
+		};
+	}, []);
+
+	// Update map view and rectangle when coordinates change
+	useEffect(() => {
+		if (!mapRef.current) return;
+
+		const x1 = parseFloat(xMin) || 0;
+		const x2 = parseFloat(xMax) || 0;
+		const y1 = parseFloat(yMin) || 0;
+		const y2 = parseFloat(yMax) || 0;
+
+		// Only update if we have valid coordinates (non-zero)
+		if (x1 && x2 && y1 && y2) {
+			// Create bounds: [[south, west], [north, east]] = [[yMin, xMin], [yMax, xMax]]
+			const bounds: L.LatLngBoundsExpression = [[y1, x1], [y2, x2]];
+
+			// Remove existing rectangle
+			if (rectangleRef.current) {
+				rectangleRef.current.remove();
+			}
+
+			// Remove existing markers
+			markersRef.current.forEach(marker => marker.remove());
+			markersRef.current = [];
+
+			// Create numbered icon function
+			const createNumberedIcon = (num: number) => L.divIcon({
+				className: 'numbered-marker',
+				html: `<div style="
+					background-color: #3b82f6;
+					color: white;
+					width: 24px;
+					height: 24px;
+					border-radius: 50%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					font-weight: bold;
+					font-size: 14px;
+					border: 2px solid white;
+					box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+				">${num}</div>`,
+				iconSize: [24, 24],
+				iconAnchor: [12, 12]
+			});
+
+			// Add numbered markers at corners (1: SW, 2: SE, 3: NE, 4: NW)
+			const corners: [number, number, number][] = [
+				[1, y1, x1], // 1: Bottom-left (yMin, xMin)
+				[2, y1, x2], // 2: Bottom-right (yMin, xMax)
+				[3, y2, x2], // 3: Top-right (yMax, xMax)
+				[4, y2, x1], // 4: Top-left (yMax, xMin)
+			];
+
+			corners.forEach(([num, lat, lng]) => {
+				const marker = L.marker([lat, lng], { icon: createNumberedIcon(num) })
+					.addTo(mapRef.current!);
+				markersRef.current.push(marker);
+			});
+
+			// Add new rectangle
+			rectangleRef.current = L.rectangle(bounds, {
+				color: '#3b82f6',
+				weight: 2,
+				fillOpacity: 0.2
+			}).addTo(mapRef.current);
+
+			// Fit map to bounds with padding
+			mapRef.current.fitBounds(bounds, { padding: [50, 50] });
+		}
+	}, [xMin, xMax, yMin, yMax]);
 
 	const compareValues = (
 		val: MetaTechniques,
@@ -154,6 +262,18 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+				{/* Leaflet map */}
+				<div>
+				<div className="h-[400px] w-full rounded-lg overflow-hidden border">
+					<link
+						rel="stylesheet"
+						href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+						integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+						crossOrigin=""
+					/>
+					<div ref={mapContainerRef} className="h-full w-full"></div>
+				</div>
+				</div>
 				<div className={cn("space-y-2")}>
 					<h1 className={cn("text-2xl font-bold")}>Mission Techniques</h1>
 					<div>

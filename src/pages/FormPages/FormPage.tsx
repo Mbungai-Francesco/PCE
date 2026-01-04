@@ -10,7 +10,7 @@ import { TechForm, type TechFormHandle } from './TechForm';
 import { AdminForm, type AdminFormHandle } from './AdminPage';
 
 export const FormPage = () => {
-  const [formNum, setFormNum] = useState(1);
+  const [formNum, setFormNum] = useState(3);
   const progressRef = useRef<HTMLDivElement | null>(null);
   const missionFormRef = useRef<MissionFormHandle>(null);
   const generaleFormRef = useRef<GeneraleFormHandle>(null);
