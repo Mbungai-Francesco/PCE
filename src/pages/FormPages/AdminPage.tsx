@@ -56,18 +56,18 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 	}, [adminData, form]);
 
 	// ? Compare function to check if values have changed
-	// const compareValues = (
-	// 	val: MetaAdmin,
-	// 	adminData: MetaAdmin | null
-	// ): boolean => {
-	// 	if (!adminData) return true;
+	const compareValues = (
+		val: MetaAdmin,
+		adminData: MetaAdmin | null
+	): boolean => {
+		if (!adminData) return true;
 
-	// 	return (
-	// 		val.langue !== adminData.langue ||
-	// 		val.SRS_CRSUtilise !== adminData.SRS_CRSUtilise ||
-	// 		val.contraintesLegales !== adminData.contraintesLegales
-	// 	);
-	// };
+		return (
+			val.langue !== adminData.langue ||
+			val.SRS_CRSUtilise !== adminData.SRS_CRSUtilise ||
+			val.contraintesLegales !== adminData.contraintesLegales
+		);
+	};
 
 	// 2. Define a submit handler.
 	
@@ -82,20 +82,24 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 				idMission: id,
 			};
 			if(adminData && adminData.id){
-				loadToast("Updating admin data", "", 0, "blue");
-				updateMetaAdmin(id, val)
-					.then((data) => {
-						console.log("Admin data updated successfully:", data);
-						loadToast("Admin data Updated", "", 1, "green");
-						setAdminData(data);
-						updateMissionFinistere(data.idMission).then(() => {
-							window.location.href = "https://cerema-groupe-16.netlify.app/";
+				if(compareValues(val, adminData)){
+					const adminId = adminData.id || '';	
+					loadToast("Updating admin data", "", 0, "blue");
+					updateMetaAdmin(adminId, val)
+						.then((data) => {
+							console.log("Admin data updated successfully:", data);
+							loadToast("Admin data Updated", "", 1, "green");
+							setAdminData(data);
+							updateMissionFinistere(data.idMission).then(() => {
+								window.location.href = "https://cerema-groupe-16.netlify.app/";
+							});
+						})
+						.catch((error) => {
+							loadToast("Error updating Admin data", "", 3000, "red");
+							console.error("Error updating Admin data:", error);
 						});
-					})
-					.catch((error) => {
-						loadToast("Error updating Admin data", "", 3000, "red");
-						console.error("Error updating Admin data:", error);
-					});
+				}
+				else console.log("Nothing changed");
 			}
 			else {
 				loadToast("Creating admin data", "", 0, "blue");
