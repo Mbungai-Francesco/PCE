@@ -18,8 +18,8 @@ import type { MetaAdmin } from "@/types";
 import { loadToast } from "@/lib/loadToast";
 import { useData } from "@/hook/useData";
 import { useJwt } from "@/hook/useJwt";
-import { createMetaAdmin } from "@/api/MetaAdminApi";
-import { createMissionsFinistere } from "@/api/MetaFinistereApi";
+import { createMetaAdmin, updateMetaAdmin } from "@/api/MetaAdminApi";
+import { createMissionsFinistere, updateMissionFinistere } from "@/api/MetaFinistereApi";
 
 const formSchema = z.object({
 	langue: z.string().min(3, "Language is required"),
@@ -55,20 +55,22 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 		}
 	}, [adminData, form]);
 
-	const compareValues = (
-		val: MetaAdmin,
-		adminData: MetaAdmin | null
-	): boolean => {
-		if (!adminData) return true;
+	// ? Compare function to check if values have changed
+	// const compareValues = (
+	// 	val: MetaAdmin,
+	// 	adminData: MetaAdmin | null
+	// ): boolean => {
+	// 	if (!adminData) return true;
 
-		return (
-			val.langue !== adminData.langue ||
-			val.SRS_CRSUtilise !== adminData.SRS_CRSUtilise ||
-			val.contraintesLegales !== adminData.contraintesLegales
-		);
-	};
+	// 	return (
+	// 		val.langue !== adminData.langue ||
+	// 		val.SRS_CRSUtilise !== adminData.SRS_CRSUtilise ||
+	// 		val.contraintesLegales !== adminData.contraintesLegales
+	// 	);
+	// };
 
 	// 2. Define a submit handler.
+	
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
@@ -79,7 +81,23 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 				...values,
 				idMission: id,
 			};
-			if (compareValues(val, adminData)) {
+			if(adminData && adminData.id){
+				loadToast("Updating admin data", "", 0, "blue");
+				updateMetaAdmin(id, val)
+					.then((data) => {
+						console.log("Admin data updated successfully:", data);
+						loadToast("Admin data Updated", "", 1, "green");
+						setAdminData(data);
+						updateMissionFinistere(data.idMission).then(() => {
+							window.location.href = "https://cerema-groupe-16.netlify.app/";
+						});
+					})
+					.catch((error) => {
+						loadToast("Error updating Admin data", "", 3000, "red");
+						console.error("Error updating Admin data:", error);
+					});
+			}
+			else {
 				loadToast("Creating admin data", "", 0, "blue");
 				createMetaAdmin(val)
 					.then((data) => {
@@ -95,6 +113,22 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 						console.error("Error creating Admin data:", error);
 					});
 			}
+			// if (compareValues(val, adminData)) {
+			// 	loadToast("Creating admin data", "", 0, "blue");
+			// 	createMetaAdmin(val)
+			// 		.then((data) => {
+			// 			console.log("Admin data created successfully:", data);
+			// 			loadToast("Admin data Created", "", 1, "green");
+			// 			setAdminData(data);
+			// 			createMissionsFinistere(data.idMission).then(() => {
+			// 				window.location.href = "https://cerema-groupe-16.netlify.app/";
+			// 			});
+			// 		})
+			// 		.catch((error) => {
+			// 			loadToast("Error Creating Admin data", "", 3000, "red");
+			// 			console.error("Error creating Admin data:", error);
+			// 		});
+			// }
 		}
 	}
 
@@ -159,7 +193,7 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>
-								Contraintes Légales 
+								Contraintes Légales
 								<span className="red-star h-fit">*</span>
 							</FormLabel>
 							<FormControl>
