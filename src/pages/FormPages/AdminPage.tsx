@@ -19,7 +19,7 @@ import { loadToast } from "@/lib/loadToast";
 import { useData } from "@/hook/useData";
 import { useJwt } from "@/hook/useJwt";
 import { createMetaAdmin, updateMetaAdmin } from "@/api/MetaAdminApi";
-import { createMissionsFinistere, updateMissionFinistere } from "@/api/MetaFinistereApi";
+import { updateMissionFinistere } from "@/api/MetaFinistereApi";
 
 const formSchema = z.object({
 	langue: z.string().min(3, "Language is required"),
@@ -108,14 +108,14 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 						console.log("Admin data created successfully:", data);
 						loadToast("Admin data Created", "", 1, "green");
 						setAdminData(data);
-						createMissionsFinistere(data.idMission).then(() => {
-							window.location.href = "https://cerema-groupe-16.netlify.app/";
-						});
 					})
 					.catch((error) => {
 						loadToast("Error Creating Admin data", "", 3000, "red");
 						console.error("Error creating Admin data:", error);
-					});
+					})
+					.finally(()=>{
+						window.location.href = "https://cerema-groupe-16.netlify.app/";
+					})
 			}
 			// if (compareValues(val, adminData)) {
 			// 	loadToast("Creating admin data", "", 0, "blue");

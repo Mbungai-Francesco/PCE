@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import Navbar from "@/components/ui/navbar";
 
 const HomePage = () => {
 	const navigate = useNavigate();
@@ -35,20 +36,18 @@ const HomePage = () => {
 	];
 
 	return (
-		<div className="min-h-screen bg-linear-to-br from-blue-400 to-purple-700 w-full pt-10">
+		<div className="">
 			{/* Main Content Card */}
-			<main className="max-w-5xl mx-auto px-4 pb-16">
+			<main className="w-full min-h-screen bg-white">
 				{/* Header Section */}
-				<header className="py-10 text-center bg-sky-900/90">
-					<div className="inline-block bg-white text-sky-900 font-bold text-2xl tracking-wider px-8 py-3 rounded-lg shadow-lg mb-6">
-						CEREMA
-					</div>
+				<header className="pb-10 text-center bg-sky-900/90">
+					<Navbar />
 					<p className="text-white/90 text-lg max-w-3xl mx-auto px-4">
 						Centre d'études et d'expertise sur les risques, l'environnement, la
 						mobilité et l'aménagement
 					</p>
 				</header>
-				<div className="bg-white shadow-2xl overflow-hidden">
+				<div className=" overflow-hidden w-4/5 mx-auto ">
 					{/* Hero Section */}
 					<div className="text-center py-12 px-8 border-b border-gray-100">
 						<div className="w-20 h-20 bg-linear-to-br from-blue-400 to-purple-700 rounded-full flex items-center justify-center mx-auto mb-6">

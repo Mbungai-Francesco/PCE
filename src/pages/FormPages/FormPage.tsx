@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 export const FormPage = () => {
-	const [formNum, setFormNum] = useState(1);
+	const [formNum, setFormNum] = useState(4);
 	const progressRef = useRef<HTMLDivElement | null>(null);
 	const missionFormRef = useRef<MissionFormHandle>(null);
 	const generaleFormRef = useRef<GeneraleFormHandle>(null);
@@ -155,7 +155,7 @@ export const FormPage = () => {
 								type="submit"
 								onClick={submit}
 							>
-								Submit
+								{formNum === 4 ? "Submit" : "Next"}
 							</Button>
 						</div>
 					</div>

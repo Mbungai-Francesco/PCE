@@ -7,6 +7,7 @@ import { NotFoundPage } from './pages/NotFoundPage.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { FormIndex } from './pages/FormPages/FormIndex.tsx'
 import HomePage from './pages/HomePage.tsx'
+import CartePage from './pages/CartePage.tsx'
 
 export const router = createBrowserRouter([
   {
@@ -17,6 +18,11 @@ export const router = createBrowserRouter([
   {
     path: 'form',
     element: <FormIndex />,
+    errorElement: <NotFoundPage />
+  },
+  {
+    path: 'carte',
+    element: <CartePage  />,
     errorElement: <NotFoundPage />
   }
 ])
