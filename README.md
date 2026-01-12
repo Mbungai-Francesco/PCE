@@ -7,3 +7,5 @@ npx prisma generate
 psql db_url
 
 CREATE EXTENSION IF NOT EXISTS postgis;
+
+Check on virtual tables

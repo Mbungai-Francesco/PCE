@@ -37,6 +37,22 @@ export const GetAllMissionsDrones = async (req: Request, res: Response) =>{
     }
 }
 
+export const GetAllMissionsDronesAllDatas = async (req: Request, res: Response) =>{
+    try{
+        const missions =  await db.missionDrone.findMany({
+            include: {
+                technique: true,
+                generale: true,
+                admin: true,
+            },
+        });
+        return res.status(200).json({message : "Missions found", data: missions});
+    }catch(error: any){
+        console.log(error.message);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
 export const GetMissionDroneById = async (req: Request, res: Response) =>{
     try{
         const { id } = req.params;
@@ -46,7 +62,6 @@ export const GetMissionDroneById = async (req: Request, res: Response) =>{
                 technique: true,
                 generale: true,
                 admin: true,
-                missionFinistere: true,
             },
         });
 

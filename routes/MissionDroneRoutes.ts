@@ -5,12 +5,14 @@ import {
   GetMissionDroneById,
   UpdateMissionDroneById,
   DeleteMissionDroneById,
+  GetAllMissionsDronesAllDatas,
 } from '../controller/MissionDroneController';
 
 const MissionRoutes = express.Router();
 
 MissionRoutes.post('/mission', CreateMissionDrone);
 MissionRoutes.get('/mission', GetAllMissionsDrones);
+MissionRoutes.get('/mission/all', GetAllMissionsDronesAllDatas);
 MissionRoutes.get('/mission/:id', GetMissionDroneById);
 MissionRoutes.put('/mission/:id', UpdateMissionDroneById);
 MissionRoutes.delete('/mission/:id', DeleteMissionDroneById);
