@@ -20,6 +20,7 @@ import { useData } from "@/hook/useData";
 import { useJwt } from "@/hook/useJwt";
 import { createMetaAdmin, updateMetaAdmin } from "@/api/MetaAdminApi";
 import { updateMissionFinistere } from "@/api/MetaFinistereApi";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
 	langue: z.string().min(3, "Language is required"),
@@ -43,6 +44,7 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 			contraintesLegales: adminData?.contraintesLegales || "",
 		},
 	});
+	const navigate = useNavigate();
 
 	// Reset form when adminData changes
 	useEffect(() => {
@@ -91,7 +93,8 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 							loadToast("Admin data Updated", "", 1, "green");
 							setAdminData(data);
 							updateMissionFinistere(data.idMission).then(() => {
-								window.location.href = "https://cerema-groupe-16.netlify.app/";
+								navigate("/carte");
+								// window.location.href = "https://cerema-groupe-16.netlify.app/";
 							});
 						})
 						.catch((error) => {
@@ -114,7 +117,8 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 						console.error("Error creating Admin data:", error);
 					})
 					.finally(()=>{
-						window.location.href = "https://cerema-groupe-16.netlify.app/";
+						navigate("/carte");
+						// window.location.href = "https://cerema-groupe-16.netlify.app/";
 					})
 			}
 			// if (compareValues(val, adminData)) {

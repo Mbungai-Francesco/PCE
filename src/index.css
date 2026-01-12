@@ -125,4 +125,9 @@
   .red-star{
     @apply text-red-500 text-lg
   }
+
+  /* ? Cartepage */
+  .text-value {
+    @apply text-gray-900 font-medium;
+  }
 }
