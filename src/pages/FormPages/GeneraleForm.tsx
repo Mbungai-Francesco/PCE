@@ -14,6 +14,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
 import type { MetaGenerales } from "@/types";
 import { loadToast } from "@/lib/loadToast";
@@ -23,6 +24,13 @@ import {
 } from "@/api/MetaGeneralesApi";
 import { useData } from "@/hook/useData";
 import { useJwt } from "@/hook/useJwt";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
 	titre: z.string().min(1, "Title is required"),
@@ -33,6 +41,43 @@ const formSchema = z.object({
 export interface GeneraleFormHandle {
 	submit: () => Promise<boolean>;
 }
+
+const CATEGORIE_THEMATIQUE_OPTIONS = [
+	{ value: "farming", label: "Farming (Agriculture)" },
+	{ value: "biota", label: "Biota (Faune/Flore)" },
+	{ value: "boundaries", label: "Boundaries (Limites administratives)" },
+	{
+		value: "climatologyMeteorologyAtmosphere",
+		label: "Climatology/Meteorology (Climat/Météo)",
+	},
+	{ value: "economy", label: "Economy (Économie)" },
+	{ value: "elevation", label: "Elevation (Altimétrie/Relief)" },
+	{ value: "environment", label: "Environment (Environnement)" },
+	{
+		value: "geoscientificInformation",
+		label: "Geoscientific Information (Géologie)",
+	},
+	{ value: "health", label: "Health (Santé)" },
+	{
+		value: "imageryBaseMapsEarthCover",
+		label: "Imagery/Base Maps/Earth Cover (Imagerie/Couverture terrestre)",
+	},
+	{ value: "intelligenceMilitary", label: "Intelligence Military (Militaire)" },
+	{ value: "inlandWaters", label: "Inland Waters (Eaux intérieures)" },
+	{ value: "location", label: "Location (Localisation)" },
+	{ value: "oceans", label: "Oceans (Océans)" },
+	{
+		value: "planningCadastre",
+		label: "Planning Cadastre (Urbanisme/Cadastre)",
+	},
+	{ value: "society", label: "Society (Société)" },
+	{ value: "structure", label: "Structure (Infrastructure/Bâtiments)" },
+	{ value: "transportation", label: "Transportation (Transport)" },
+	{
+		value: "utilitiesCommunication",
+		label: "Utilities Communication (Réseaux/Communication)",
+	}
+];
 
 export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 	const { generaleData, setGeneraleData } = useData();
@@ -139,13 +184,13 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 				<div className={cn("space-y-2")}>
-					<h1 className={cn("text-2xl font-bold")}>Mission generales</h1>
+					<h1 className={cn("text-2xl font-bold")}>Informations Mission</h1>
 					<div>
 						<p className="text-black/70">
 							Informations generales du vol de drone
 						</p>
 						<p className="text-black/70 text-sm">
-							<span className="red-star">*</span> indicates required fields
+							<span className="red-star">*</span> Champs obligatoires
 						</p>
 					</div>
 				</div>
@@ -170,30 +215,46 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>
-								Résumé <span className="red-star">*</span>
+								Déscription de la Mission <span className="red-star">*</span>
 							</FormLabel>
 							<FormControl>
-								<Input placeholder="Enter mission summary" {...field} />
+								<Textarea
+									placeholder="Enter mission summary"
+									{...field}
+									className="resize-none"
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
-				<FormField
-					control={form.control}
-					name="categorieThematique"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>
-								Catégorie Thématique <span className="red-star">*</span>
-							</FormLabel>
-							<FormControl>
-								<Input placeholder="Enter thematic category" {...field} />
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+				<div className="w-full ">
+					<FormField
+						control={form.control}
+						name="categorieThematique"
+						render={({ field }) => (
+							<FormItem className="w-full">
+								<FormLabel>
+									Catégorie Thématique <span className="red-star">*</span>
+								</FormLabel>
+								<Select {...field}>
+									<SelectTrigger className="w-full">
+										<SelectValue placeholder="Choose a category" />
+									</SelectTrigger>
+									<SelectContent>
+										{CATEGORIE_THEMATIQUE_OPTIONS.map((option) => (
+											<SelectItem key={option.value} value={option.value}>
+												{option.label}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				</div>
 			</form>
 		</Form>
 	);

@@ -21,7 +21,8 @@ const CartePage = () => {
 	const [selectedMission, setSelectedMission] = useState<MissionDrone | null>(null);
 	const mapRef = useRef<L.Map | null>(null);
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
-	const rectanglesRef = useRef<L.Rectangle[]>([]);
+	const markersRef = useRef<L.Marker[]>([]);
+	const activeRectangleRef = useRef<L.Rectangle | null>(null);
 
 	// Fetch missions
 	useEffect(() => {
@@ -56,13 +57,17 @@ const CartePage = () => {
 		};
 	}, []);
 
-	// Update map with mission rectangles
+	// Update map with mission markers
 	useEffect(() => {
 		if (!mapRef.current) return;
 
-		// Remove existing rectangles
-		rectanglesRef.current.forEach((rect) => rect.remove());
-		rectanglesRef.current = [];
+		// Remove existing markers and rectangle
+		markersRef.current.forEach((marker) => marker.remove());
+		markersRef.current = [];
+		if (activeRectangleRef.current) {
+			activeRectangleRef.current.remove();
+			activeRectangleRef.current = null;
+		}
 
 		// Colors for different missions
 		const colors = [
@@ -76,61 +81,94 @@ const CartePage = () => {
 			"#f97316", // orange
 		];
 
-		const allBounds: L.LatLngBounds[] = [];
+		const allPositions: L.LatLng[] = [];
 
 		missions.forEach((mission, index) => {
 			const tech = mission.technique;
 			if (tech && tech.xMin && tech.xMax && tech.yMin && tech.yMax) {
-				const bounds: L.LatLngBoundsExpression = [
-					[tech.yMin, tech.xMin],
-					[tech.yMax, tech.xMax],
-				];
-
+				// Calculate center of the zone for marker placement
+				const centerLat = (tech.yMin + tech.yMax) / 2;
+				const centerLng = (tech.xMin + tech.xMax) / 2;
 				const color = colors[index % colors.length];
 
-				// Create rectangle with popup
-				const rectangle = L.rectangle(bounds, {
-					color: color,
-					weight: 2,
-					fillOpacity: 0.3,
+				// Create custom location icon
+				const locationIcon = L.divIcon({
+					className: "custom-location-icon",
+					html: `
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="32" height="32" style="filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));">
+							<path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+						</svg>
+					`,
+					iconSize: [32, 32],
+					iconAnchor: [16, 32],
+				});
+
+				// Create marker at center of zone
+				const marker = L.marker([centerLat, centerLng], {
+					icon: locationIcon,
 				}).addTo(mapRef.current!);
 
-				// Add click handler to select mission
-				rectangle.on("click", () => {
+				// Add tooltip with mission name
+				marker.bindTooltip(mission.typeMission || `Mission ${index + 1}`, {
+					permanent: false,
+					direction: "top",
+					offset: [0, -32],
+				});
+
+				// Add click handler to draw rectangle and select mission
+				marker.on("click", () => {
+					// Remove previous rectangle if exists
+					if (activeRectangleRef.current) {
+						activeRectangleRef.current.remove();
+					}
+
+					// Draw rectangle for this mission
+					const bounds: L.LatLngBoundsExpression = [
+						[tech.yMin, tech.xMin],
+						[tech.yMax, tech.xMax],
+					];
+
+					activeRectangleRef.current = L.rectangle(bounds, {
+						color: color,
+						weight: 3,
+						fillOpacity: 0.25,
+						dashArray: "5, 10",
+					}).addTo(mapRef.current!);
+
+					// Fit map to rectangle bounds
+					mapRef.current!.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+
+					// Select mission for sidebar
 					setSelectedMission(mission);
 				});
 
-				// Add popup with mission info
-				rectangle.bindPopup(`
-					<div style="min-width: 200px;">
-						<h3 style="font-weight: bold; margin-bottom: 8px;">
-							${mission.typeMission || "Mission " + (index + 1)}
-						</h3>
-						<p><strong>Propriétaire:</strong> ${mission.nomProprietaire}</p>
-						<p><strong>Entreprise:</strong> ${mission.entrepriseProprietaire}</p>
-						<p><strong>Début:</strong> ${new Date(
-							mission.dateDebutVol
-						).toLocaleDateString()}</p>
-						<p><strong>Fin:</strong> ${new Date(
-							mission.dateFinVol
-						).toLocaleDateString()}</p>
-						<p><strong>Capteur:</strong> ${mission.capteurUtilise}</p>
-					</div>
-				`);
-
-				rectanglesRef.current.push(rectangle);
-				allBounds.push(L.latLngBounds(bounds));
+				markersRef.current.push(marker);
+				allPositions.push(L.latLng(centerLat, centerLng));
 			}
 		});
 
-		// Fit map to show all rectangles
-		if (allBounds.length > 0) {
-			const combinedBounds = allBounds.reduce((acc, bounds) =>
-				acc.extend(bounds)
-			);
-			mapRef.current.fitBounds(combinedBounds, { padding: [50, 50] });
+		// Fit map to show all markers
+		if (allPositions.length > 0) {
+			const group = L.latLngBounds(allPositions);
+			mapRef.current.fitBounds(group, { padding: [50, 50] });
 		}
 	}, [missions]);
+
+	// Function to clear selection and rectangle
+	const clearSelection = () => {
+		if (activeRectangleRef.current) {
+			activeRectangleRef.current.remove();
+			activeRectangleRef.current = null;
+		}
+		setSelectedMission(null);
+		
+		// Reset map view to show all markers
+		if (mapRef.current && markersRef.current.length > 0) {
+			const positions = markersRef.current.map(m => m.getLatLng());
+			const group = L.latLngBounds(positions);
+			mapRef.current.fitBounds(group, { padding: [50, 50] });
+		}
+	};
 
 	return (
 		<main className="w-full min-h-screen bg-white flex flex-col">
@@ -156,7 +194,7 @@ const CartePage = () => {
 									{selectedMission.generale?.titre || "Mission"}
 								</h2>
 								<button
-									onClick={() => setSelectedMission(null)}
+									onClick={clearSelection}
 									className="text-gray-400 hover:text-gray-600 text-xl"
 								>
 									×

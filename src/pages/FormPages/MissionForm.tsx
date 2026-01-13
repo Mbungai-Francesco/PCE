@@ -182,13 +182,13 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 				<div className={cn("space-y-2")}>
-					<h1 className={cn("text-2xl font-bold")}>Mission Drone</h1>
+					<h1 className={cn("text-2xl font-bold")}>Informations Générales</h1>
 					<div className="">
 						<p className="text-black/70">
 							Informations principales du vol de drone
 						</p>
 						<p className="text-black/70 text-sm">
-							<span className="red-star">*</span> indicates required fields
+							<span className="red-star">*</span> Champs obligatoires
 						</p>
 					</div>
 				</div>
@@ -198,7 +198,7 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>
-								Nom de l'entreprise <span className="red-star">*</span>
+								Nom de l'Entreprise <span className="red-star">*</span>
 							</FormLabel>
 							<FormControl>
 								<Input placeholder="Entreprise name" {...field} />
@@ -213,7 +213,8 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>
-								Nom Propriétaire <span className="red-star">*</span>
+								Nom(s) et Prénom(s) du Propriétaire{" "}
+								<span className="red-star">*</span>
 							</FormLabel>
 							<FormControl>
 								<Input placeholder="Owner's name" {...field} />
@@ -243,7 +244,7 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>
-								Date de Vol <span className="red-star">*</span>
+								Date de Début du Vol <span className="red-star">*</span>
 							</FormLabel>
 							<FormControl>
 								<Input
@@ -262,7 +263,7 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>
-								Date Fin de Vol <span className="red-star">*</span>
+								Date de Fin du Vol <span className="red-star">*</span>
 							</FormLabel>
 							<FormControl>
 								<Input
@@ -320,7 +321,7 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 									<option value="evaluation_dommages">
 										Évaluation de dommages
 									</option>
-									<option value="autre">Autre mission</option>
+									{/* <option value="autre">Autre mission</option> */}
 								</select>
 							</FormControl>
 							<FormMessage />
@@ -455,12 +456,12 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>
-								Mot cles <span className="red-star">*</span>
+								Mots clés <span className="red-star">*</span>
 							</FormLabel>
 							<FormControl>
 								<Input placeholder="Keywords for data" {...field} />
 							</FormControl>
-							<FormDescription>Example: plage, militaire</FormDescription>
+							<FormDescription>Exemple: plage, militaire</FormDescription>
 							<FormMessage />
 						</FormItem>
 					)}

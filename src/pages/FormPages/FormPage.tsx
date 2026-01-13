@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 export const FormPage = () => {
-	const [formNum, setFormNum] = useState(4);
+	const [formNum, setFormNum] = useState(3);
 	const progressRef = useRef<HTMLDivElement | null>(null);
 	const missionFormRef = useRef<MissionFormHandle>(null);
 	const generaleFormRef = useRef<GeneraleFormHandle>(null);
@@ -132,7 +132,7 @@ export const FormPage = () => {
 					{formNum === 4 && <AdminForm ref={adminFormRef} />}
 					<div className="mt-4 flex space-x-4 w-full justify-between">
 						<Button
-							className="hover:cursor-pointer"
+							className="hover:cursor-pointer bg-red-500 font-bold hover:bg-red-700"
 							type="submit"
 							onClick={cancel}
 						>
@@ -141,7 +141,7 @@ export const FormPage = () => {
 						<div className="gap-2 flex">
 							{formNum != 1 && (
 								<Button
-									className="hover:cursor-pointer"
+									className="hover:cursor-pointer hover:bg-gray-500"
 									type="submit"
 									onClick={() => {
 										setFormNum(formNum - 1);
@@ -151,7 +151,7 @@ export const FormPage = () => {
 								</Button>
 							)}
 							<Button
-								className="hover:cursor-pointer"
+								className="hover:cursor-pointer bg-green-700 font-bold hover:bg-green-800"
 								type="submit"
 								onClick={submit}
 							>
