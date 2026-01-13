@@ -28,7 +28,7 @@ export const getMissionsDrones = async () => {
 
 export const getMissionsDronesAllData = async () => {
     try{
-        const res = await axios.get(`${link}/${route}/all`)
+        const res = await axios.get(`${link}/${route}_all`)
         console.log("message", res.statusText);
         console.log(res.data.data);
         return res.data.data as MissionDrone[]
