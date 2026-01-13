@@ -312,7 +312,7 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 					</div>
 				</div>
 				<div className={cn("space-y-2")}>
-					<h1 className={cn("text-2xl font-bold")}>Mission Techniques</h1>
+					<h1 className={cn("text-2xl font-bold")}>Zone de Vol</h1>
 					<div>
 						<p className="text-black/70">
 							{" "}
