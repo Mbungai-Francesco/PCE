@@ -1,9 +1,11 @@
 import { getMissionsDronesAllData } from "@/api/MissionDroneApi";
 import Navbar from "@/components/ui/navbar";
 import type { MissionDrone } from "@/types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 // Fix for default marker icons in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -23,6 +25,19 @@ const CartePage = () => {
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 	const markersRef = useRef<L.Marker[]>([]);
 	const activeRectangleRef = useRef<L.Rectangle | null>(null);
+
+	// Filter states
+	const [isFilterOpen, setIsFilterOpen] = useState(false);
+	const [filters, setFilters] = useState({
+		titre: "",
+		motsCles: "",
+		categorie: "",
+		dateJour: "",
+		dateMois: "",
+		dateAnnee: "",
+		typeMission: "",
+	});
+	const [appliedFilters, setAppliedFilters] = useState(filters);
 
 	// Fetch missions
 	useEffect(() => {
@@ -57,6 +72,68 @@ const CartePage = () => {
 		};
 	}, []);
 
+	// Get unique categories and mission types for dropdowns
+	const categories = useMemo(() => {
+		const cats = missions.map(m => m.generale?.categorieThematique).filter(Boolean);
+		return [...new Set(cats)];
+	}, [missions]);
+
+	const missionTypes = useMemo(() => {
+		const types = missions.map(m => m.typeMission).filter(Boolean);
+		return [...new Set(types)];
+	}, [missions]);
+
+	// Filter missions based on applied filters
+	const filteredMissions = useMemo(() => {
+		return missions.filter(mission => {
+			// Filter by titre
+			if (appliedFilters.titre && !mission.generale?.titre?.toLowerCase().includes(appliedFilters.titre.toLowerCase())) {
+				return false;
+			}
+			// Filter by mots-clés
+			if (appliedFilters.motsCles && !mission.motsCles?.toLowerCase().includes(appliedFilters.motsCles.toLowerCase())) {
+				return false;
+			}
+			// Filter by catégorie
+			if (appliedFilters.categorie && mission.generale?.categorieThematique !== appliedFilters.categorie) {
+				return false;
+			}
+			// Filter by type de mission
+			if (appliedFilters.typeMission && mission.typeMission !== appliedFilters.typeMission) {
+				return false;
+			}
+			// Filter by date de publication
+			if (appliedFilters.dateAnnee || appliedFilters.dateMois || appliedFilters.dateJour) {
+				const pubDate = mission.technique?.datePublication ? new Date(mission.technique.datePublication) : null;
+				if (!pubDate) return false;
+				if (appliedFilters.dateAnnee && pubDate.getFullYear() !== parseInt(appliedFilters.dateAnnee)) return false;
+				if (appliedFilters.dateMois && (pubDate.getMonth() + 1) !== parseInt(appliedFilters.dateMois)) return false;
+				if (appliedFilters.dateJour && pubDate.getDate() !== parseInt(appliedFilters.dateJour)) return false;
+			}
+			return true;
+		});
+	}, [missions, appliedFilters]);
+
+	// Apply filters
+	const applyFilters = () => {
+		setAppliedFilters(filters);
+	};
+
+	// Clear filters
+	const clearFilters = () => {
+		const emptyFilters = {
+			titre: "",
+			motsCles: "",
+			categorie: "",
+			dateJour: "",
+			dateMois: "",
+			dateAnnee: "",
+			typeMission: "",
+		};
+		setFilters(emptyFilters);
+		setAppliedFilters(emptyFilters);
+	};
+
 	// Update map with mission markers
 	useEffect(() => {
 		if (!mapRef.current) return;
@@ -83,7 +160,7 @@ const CartePage = () => {
 
 		const allPositions: L.LatLng[] = [];
 
-		missions.forEach((mission, index) => {
+		filteredMissions.forEach((mission, index) => {
 			const tech = mission.technique;
 			if (tech && tech.xMin && tech.xMax && tech.yMin && tech.yMax) {
 				// Calculate center of the zone for marker placement
@@ -152,7 +229,7 @@ const CartePage = () => {
 			const group = L.latLngBounds(allPositions);
 			mapRef.current.fitBounds(group, { padding: [50, 50] });
 		}
-	}, [missions]);
+	}, [filteredMissions]);
 
 	// Function to clear selection and rectangle
 	const clearSelection = () => {
@@ -176,14 +253,162 @@ const CartePage = () => {
 				<Navbar />
 			</header>
 			{/* Leaflet map */}
-			<div className="w-full grow flex bg-amber-600">
+			<div className="w-full grow flex">
 				<link
 					rel="stylesheet"
 					href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 					integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
 					crossOrigin=""
 				/>
-				<div ref={mapContainerRef} className="grow w-[75%] "></div>
+				<div className="grow w-[75%] relative">
+					{/* Map Container */}
+					<div ref={mapContainerRef} className="absolute inset-0"></div>
+					
+					{/* Filter Button */}
+					<button
+						onClick={() => setIsFilterOpen(!isFilterOpen)}
+						className="absolute top-30 left-4 z-[1000] bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-md shadow-lg flex items-center gap-2 font-semibold transition-colors text-lg"
+					>
+						<span>🔍</span> Filtres
+					</button>
+
+					{/* Filter Panel */}
+					{isFilterOpen && (
+						<div className="absolute top-42 left-4 z-[1000] bg-white rounded-lg shadow-xl border w-72 overflow-hidden">
+							{/* Header */}
+							<div className="bg-emerald-500 text-white px-4 py-2 font-semibold flex items-center gap-2">
+								<span>🔍</span> Filtres Avancés
+							</div>
+
+							<div className="p-4 space-y-4">
+								{/* Titre */}
+								<div>
+									<label className="text-sm font-medium text-emerald-600 flex items-center gap-1">
+										<span>✏️</span> Titre:
+									</label>
+									<Input
+										type="text"
+										placeholder="Rechercher par titre..."
+										value={filters.titre}
+										onChange={(e) => setFilters({...filters, titre: e.target.value})}
+										className="mt-1 text-black"
+									/>
+								</div>
+
+								{/* Mots-clés */}
+								<div>
+									<label className="text-sm font-medium text-emerald-600 flex items-center gap-1">
+										<span>🏷️</span> Mots-clés:
+									</label>
+									<Input
+										type="text"
+										placeholder="Rechercher par mots-clés..."
+										value={filters.motsCles}
+										onChange={(e) => setFilters({...filters, motsCles: e.target.value})}
+										className="mt-1 text-black"
+									/>
+								</div>
+
+								{/* Catégorie thématique */}
+								<div>
+									<label className="text-sm font-medium text-emerald-600 flex items-center gap-1">
+										<span>📁</span> Catégorie thématique:
+									</label>
+									<select
+										value={filters.categorie}
+										onChange={(e) => setFilters({...filters, categorie: e.target.value})}
+										className="mt-1 w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-black"
+									>
+										<option value="">Toutes les catégories</option>
+										{categories.map((cat) => (
+											<option key={cat} value={cat}>{cat}</option>
+										))}
+									</select>
+								</div>
+
+								{/* Date de publication */}
+								<div>
+									<label className="text-sm font-medium text-emerald-600 flex items-center gap-1">
+										<span>📅</span> Date de publication:
+									</label>
+									<div className="flex gap-2 mt-1">
+										<select
+											value={filters.dateJour}
+											onChange={(e) => setFilters({...filters, dateJour: e.target.value})}
+											className="flex-1 border rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-black"
+										>
+											<option value="">Jour</option>
+											{Array.from({length: 31}, (_, i) => i + 1).map(d => (
+												<option key={d} value={d}>{d}</option>
+											))}
+										</select>
+										<select
+											value={filters.dateMois}
+											onChange={(e) => setFilters({...filters, dateMois: e.target.value})}
+											className="flex-1 border rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-black"
+										>
+											<option value="">Mois</option>
+											{Array.from({length: 12}, (_, i) => i + 1).map(m => (
+												<option key={m} value={m}>{m}</option>
+											))}
+										</select>
+										<select
+											value={filters.dateAnnee}
+											onChange={(e) => setFilters({...filters, dateAnnee: e.target.value})}
+											className="flex-1 border rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-black"
+										>
+											<option value="">Année</option>
+											{Array.from({length: 10}, (_, i) => new Date().getFullYear() - i).map(y => (
+												<option key={y} value={y}>{y}</option>
+											))}
+										</select>
+									</div>
+								</div>
+
+								{/* Type de Mission */}
+								<div>
+									<label className="text-sm font-medium text-emerald-600 flex items-center gap-1">
+										<span>🚁</span> Type de Mission:
+									</label>
+									<select
+										value={filters.typeMission}
+										onChange={(e) => setFilters({...filters, typeMission: e.target.value})}
+										className="mt-1 w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-black"
+									>
+										<option value="">Tous les types</option>
+										{missionTypes.map((type) => (
+											<option key={type} value={type}>{type}</option>
+										))}
+									</select>
+								</div>
+
+								{/* Buttons */}
+								<div className="flex gap-2">
+									<Button
+										type="button"
+										onClick={applyFilters}
+										className="flex-1 bg-emerald-500 hover:bg-emerald-600"
+									>
+										Appliquer
+									</Button>
+									<Button
+										type="button"
+										variant="outline"
+										onClick={clearFilters}
+										className="flex-1 border-indigo-400 text-indigo-600 hover:bg-indigo-50"
+									>
+										Effacer
+									</Button>
+								</div>
+
+								{/* Visible Elements Counter */}
+								<div className="bg-lime-200 text-lime-800 text-center py-2 rounded-md font-medium text-sm">
+									Éléments visibles: {filteredMissions.length}
+								</div>
+							</div>
+						</div>
+					)}
+				</div>
 
 				{/* Display data of selected mission here */}
 				<div className={cn("w-[25%] grow bg-gray-50 p-4 overflow-y-auto")}>
