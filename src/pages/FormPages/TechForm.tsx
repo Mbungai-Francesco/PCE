@@ -3,8 +3,9 @@ import { cn } from "../../lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import L from "leaflet";
+import { Button } from "@/components/ui/button";
 
 import {
 	Form,
@@ -55,6 +56,9 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 	const mapContainerRef = useRef<HTMLDivElement | null>(null);
 	const rectangleRef = useRef<L.Rectangle | null>(null);
 	const markersRef = useRef<L.Marker[]>([]);
+	const drawingMarkersRef = useRef<L.Marker[]>([]);
+	const [isDrawingMode, setIsDrawingMode] = useState(false);
+	const [drawingPoints, setDrawingPoints] = useState<L.LatLng[]>([]);
 
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -106,6 +110,102 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 			}
 		};
 	}, []);
+
+	// Handle drawing mode click events
+	useEffect(() => {
+		if (!mapRef.current) return;
+
+		const handleMapClick = (e: L.LeafletMouseEvent) => {
+			if (!isDrawingMode) return;
+
+			const newPoint = e.latlng;
+			const currentPoints = [...drawingPoints, newPoint];
+
+			// Add marker at clicked point
+			const drawingIcon = L.divIcon({
+				className: "drawing-marker",
+				html: `<div style="
+					background-color: #ef4444;
+					color: white;
+					width: 28px;
+					height: 28px;
+					border-radius: 50%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					font-weight: bold;
+					font-size: 14px;
+					border: 3px solid white;
+					box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+				">${currentPoints.length}</div>`,
+				iconSize: [28, 28],
+				iconAnchor: [14, 14],
+			});
+
+			const marker = L.marker(newPoint, { icon: drawingIcon }).addTo(mapRef.current!);
+			drawingMarkersRef.current.push(marker);
+
+			if (currentPoints.length >= 4) {
+				// Calculate bounding box from all 4 points
+				const lats = currentPoints.map(p => p.lat);
+				const lngs = currentPoints.map(p => p.lng);
+
+				const minLat = Math.min(...lats);
+				const maxLat = Math.max(...lats);
+				const minLng = Math.min(...lngs);
+				const maxLng = Math.max(...lngs);
+
+				// Update form values (lng = X, lat = Y)
+				form.setValue("xMin", minLng.toFixed(6));
+				form.setValue("xMax", maxLng.toFixed(6));
+				form.setValue("yMin", minLat.toFixed(6));
+				form.setValue("yMax", maxLat.toFixed(6));
+
+				// Clear drawing markers
+				drawingMarkersRef.current.forEach(m => m.remove());
+				drawingMarkersRef.current = [];
+
+				// Exit drawing mode
+				setIsDrawingMode(false);
+				setDrawingPoints([]);
+			} else {
+				setDrawingPoints(currentPoints);
+			}
+		};
+
+		mapRef.current.on("click", handleMapClick);
+
+		return () => {
+			mapRef.current?.off("click", handleMapClick);
+		};
+	}, [isDrawingMode, drawingPoints, form]);
+
+	// Toggle drawing mode
+	const toggleDrawingMode = () => {
+		if (isDrawingMode) {
+			// Cancel drawing mode
+			drawingMarkersRef.current.forEach(m => m.remove());
+			drawingMarkersRef.current = [];
+			setDrawingPoints([]);
+		}
+		setIsDrawingMode(!isDrawingMode);
+	};
+
+	// Clear zone
+	const clearZone = () => {
+		form.setValue("xMin", "0");
+		form.setValue("xMax", "0");
+		form.setValue("yMin", "0");
+		form.setValue("yMax", "0");
+		
+		// Remove rectangle and markers
+		if (rectangleRef.current) {
+			rectangleRef.current.remove();
+			rectangleRef.current = null;
+		}
+		markersRef.current.forEach(m => m.remove());
+		markersRef.current = [];
+	};
 
 	// Update map view and rectangle when coordinates change
 	useEffect(() => {
@@ -301,7 +401,46 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 				{/* Leaflet map */}
 				<div>
-					<div className="h-[400px] w-full rounded-lg overflow-hidden border">
+					<div className="flex gap-2 mb-2">
+						<Button
+							type="button"
+							variant={isDrawingMode ? "destructive" : "default"}
+							onClick={toggleDrawingMode}
+							className="flex items-center gap-2"
+						>
+							{isDrawingMode ? (
+								<>
+									<span>✕</span> Annuler le dessin
+								</>
+							) : (
+								<>
+									Dessiner la zone
+								</>
+							)}
+						</Button>
+						<Button
+							type="button"
+							variant="outline"
+							onClick={clearZone}
+							className="flex items-center gap-2"
+						>
+							Effacer
+						</Button>
+					</div>
+					{isDrawingMode && (
+						<div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-2">
+							<p className="text-blue-800 text-sm font-medium">
+								📍 Mode dessin actif - Cliquez sur 4 points pour définir la zone
+							</p>
+							<p className="text-blue-600 text-xs mt-1">
+								Points placés: {drawingPoints.length}/4
+							</p>
+						</div>
+					)}
+					<div className={cn(
+						"h-[400px] w-full rounded-lg overflow-hidden border",
+						isDrawingMode && "border-2 border-blue-500"
+					)}>
 						<link
 							rel="stylesheet"
 							href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"

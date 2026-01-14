@@ -8,6 +8,7 @@ import { forwardRef, useEffect, useImperativeHandle } from "react";
 import {
 	Form,
 	FormControl,
+	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -174,7 +175,14 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 								Langue <span className="red-star">*</span>
 							</FormLabel>
 							<FormControl>
-								<Input placeholder="Enter mission langue" {...field} />
+								<select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+									<option value="">Select a language</option>
+									<option value="English">English</option>
+									<option value="German">German</option>
+									<option value="French">French</option>
+									<option value="Italian">Italian</option>
+									<option value="Spanish">Spanish</option>
+								</select>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -191,7 +199,7 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 							<FormControl>
 								<Input placeholder="Enter mission SRS CRS Utilise" {...field} />
 							</FormControl>
-							<FormMessage />
+							<FormDescription>Exemple: EPSG:4326</FormDescription>
 						</FormItem>
 					)}
 				/>
@@ -207,7 +215,7 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 							<FormControl>
 								<Input placeholder="Enter legal constraints" {...field} />
 							</FormControl>
-							<FormMessage />
+							<FormDescription>Exemple: License Libre</FormDescription>
 						</FormItem>
 					)}
 				/>

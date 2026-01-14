@@ -97,12 +97,12 @@ const HomePage = () => {
 							>
 								🚀 NOUVEAU PROJET
 							</Button>
-							<Button
+							{/* <Button
 								variant="outline"
 								className="border-purple-600 text-purple-600 hover:bg-purple-50 px-8 py-6 text-lg rounded-full"
 							>
 								📥 IMPORTER DES DONNÉES
-							</Button>
+							</Button> */}
 						</div>
 					</div>
 

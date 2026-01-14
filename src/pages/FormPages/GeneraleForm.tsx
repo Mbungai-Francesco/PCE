@@ -237,10 +237,12 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 								<FormLabel>
 									Catégorie Thématique <span className="red-star">*</span>
 								</FormLabel>
-								<Select {...field}>
-									<SelectTrigger className="w-full">
-										<SelectValue placeholder="Choose a category" />
-									</SelectTrigger>
+								<Select onValueChange={field.onChange} value={field.value}>
+									<FormControl>
+										<SelectTrigger className="w-full">
+											<SelectValue placeholder="Select a thematic category" />
+										</SelectTrigger>
+									</FormControl>
 									<SelectContent>
 										{CATEGORIE_THEMATIQUE_OPTIONS.map((option) => (
 											<SelectItem key={option.value} value={option.value}>

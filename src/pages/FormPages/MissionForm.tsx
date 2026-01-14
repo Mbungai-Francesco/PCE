@@ -462,7 +462,6 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 								<Input placeholder="Keywords for data" {...field} />
 							</FormControl>
 							<FormDescription>Exemple: plage, militaire</FormDescription>
-							<FormMessage />
 						</FormItem>
 					)}
 				/>
