@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 export const FormPage = () => {
-	const [formNum, setFormNum] = useState(2);
+	const [formNum, setFormNum] = useState(1);
 	const progressRef = useRef<HTMLDivElement | null>(null);
 	const missionFormRef = useRef<MissionFormHandle>(null);
 	const generaleFormRef = useRef<GeneraleFormHandle>(null);

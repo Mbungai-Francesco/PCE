@@ -1,6 +1,7 @@
 // import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/ui/navbar";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
 	// const navigate = useNavigate();
@@ -90,12 +91,13 @@ const HomePage = () => {
 							Créez un nouveau projet ou importez des métadonnées existantes
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center">
-							<Button
-								onClick={() => window.open("/form", "_blank")}
-								className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg rounded-full"
-							>
-								🚀 NOUVEAU PROJET
-							</Button>
+							<Link to="/form">
+								<Button
+									className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg rounded-full"
+								>
+									🚀 NOUVEAU PROJET
+								</Button>
+							</Link>
 							{/* <Button
 								variant="outline"
 								className="border-purple-600 text-purple-600 hover:bg-purple-50 px-8 py-6 text-lg rounded-full"
