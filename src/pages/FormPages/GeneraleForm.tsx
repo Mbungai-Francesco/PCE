@@ -138,16 +138,16 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 
 	const { mutate } = useMutation({
 		mutationFn: (val: MetaGenerales) => {
-			loadToast("Creating generales", "", 0, "blue");
+			loadToast("Création de la Mission en cours", "", 0, "blue");
 			return createMetaGenerales(val);
 		},
 		onSuccess: (data) => {
 			console.log("Generales created successfully:", data);
-			loadToast("Generales Created", "", 1, "green");
+			loadToast("Informations Mission Créées", "", 1, "green");
 			setGeneraleData(data);
 		},
 		onError: (error) => {
-			loadToast("Error Creating Generales", "", 3000, "red");
+			loadToast("Erreur lors de la création des", "informations de la mission", 3000, "red");
 			console.error("Error creating Generales:", error);
 		},
 	});
@@ -155,16 +155,16 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 	const { mutate: update } = useMutation({
 		mutationFn: (val: MetaGenerales) => {
 			const id = val.id || "";
-			loadToast("updating Generales", "", 0, "blue");
+			loadToast("Mise à jour des ", "informations de la mission", 0, "blue");
 			return updateMetaGenerales(id, val);
 		},
 		onSuccess: (data) => {
-			loadToast("Generales Updated", "", 3000, "green");
+			loadToast("Informations Mission Mise à Jour", "", 3000, "green");
 			console.log("Generales updated successfully:", data);
 			setGeneraleData(data);
 		},
 		onError: (error) => {
-			loadToast("Error updating Generales", "", 3000, "red");
+			loadToast("Erreur lors de la mise à jour des", "informations de la mission", 3000, "red");
 			console.error("Error updating Generales:", error);
 		},
 	});
@@ -187,7 +187,7 @@ export const GeneraleForm = forwardRef<GeneraleFormHandle>((_props, ref) => {
 					<h1 className={cn("text-2xl font-bold")}>Informations Mission</h1>
 					<div>
 						<p className="text-black/70">
-							Informations generales du vol de drone
+							Informations sur la mission de vol
 						</p>
 						<p className="text-black/70 text-sm">
 							<span className="red-star">*</span> Champs obligatoires

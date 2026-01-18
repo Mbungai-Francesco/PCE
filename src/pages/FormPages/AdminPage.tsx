@@ -87,11 +87,11 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 			if(adminData && adminData.id){
 				if(compareValues(val, adminData)){
 					const adminId = adminData.id || '';	
-					loadToast("Updating admin data", "", 0, "blue");
+					loadToast("Mise à jour des", "données complémentaires", 0, "blue");
 					updateMetaAdmin(adminId, val)
 						.then((data) => {
 							console.log("Admin data updated successfully:", data);
-							loadToast("Admin data Updated", "", 1, "green");
+							loadToast("Données complémentaires mises à jour", "", 1, "green");
 							setAdminData(data);
 							updateMissionFinistere(data.idMission).then(() => {
 								navigate("/carte");
@@ -99,7 +99,7 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 							});
 						})
 						.catch((error) => {
-							loadToast("Error updating Admin data", "", 3000, "red");
+							loadToast("Erreur lors de la mise à jour des", "données complémentaires", 3000, "red");
 							console.error("Error updating Admin data:", error);
 						});
 				}
@@ -109,13 +109,13 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 				loadToast("Creating admin data", "", 0, "blue");
 				createMetaAdmin(val)
 					.then((data) => {
-						console.log("Admin data created successfully:", data);
-						loadToast("Admin data Created", "", 1, "green");
+						console.log("Données complémentaires créées avec succès:", data);
+						loadToast("Données complémentaires data Created", "", 1, "green");
 						setAdminData(data);
 					})
 					.catch((error) => {
-						loadToast("Error Creating Admin data", "", 3000, "red");
-						console.error("Error creating Admin data:", error);
+						loadToast("Erreur lors de la création des", "données complémentaires", 3000, "red");
+						console.error("Error creating données complémentaires:", error);
 					})
 					.finally(()=>{
 						navigate("/carte");
@@ -156,13 +156,13 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 				<div className={cn("space-y-2")}>
-					<h1 className={cn("text-2xl font-bold")}>Donnee admin</h1>
+					<h1 className={cn("text-2xl font-bold")}>Informations complémentaires</h1>
 					<div>
 						<p className="text-black/70">
-							Informations administratives du vol de drone
+							Informations complémentaires du vol de drone
 						</p>
 						<p className="text-black/70 text-sm">
-							<span className="red-star">*</span> indicates required fields
+							<span className="red-star">*</span> Champs obligatoires
 						</p>
 					</div>
 				</div>
@@ -177,11 +177,11 @@ export const AdminForm = forwardRef<AdminFormHandle>((_props, ref) => {
 							<FormControl>
 								<select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
 									<option value="">Select a language</option>
-									<option value="English">English</option>
-									<option value="German">German</option>
-									<option value="French">French</option>
-									<option value="Italian">Italian</option>
-									<option value="Spanish">Spanish</option>
+									<option value="English">Anglais</option>
+									<option value="German">Allemand</option>
+									<option value="French">Français</option>
+									<option value="Italian">Italien</option>
+									<option value="Spanish">Espagnol</option>
 								</select>
 							</FormControl>
 							<FormMessage />

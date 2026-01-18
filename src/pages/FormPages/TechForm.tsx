@@ -325,16 +325,16 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 
 	const { mutate } = useMutation({
 		mutationFn: (val: MetaTechniques) => {
-			loadToast("Creating techniques", "", 0, "blue");
+			loadToast("Création des données de zone", "", 0, "blue");
 			return createMetaTechniques(val);
 		},
 		onSuccess: (data) => {
 			console.log("Techniques created successfully:", data);
-			loadToast("Techniques Created", "", 1, "green");
+			loadToast("Données de zone créées", "", 1, "green");
 			setTechData(data);
 		},
 		onError: (error) => {
-			loadToast("Error Creating Techniques", "", 3000, "red");
+			loadToast("Erreur lors de la création des données de zone", "", 3000, "red");
 			console.error("Error creating Techniques:", error);
 		},
 	});
@@ -342,16 +342,16 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 	const { mutate: update } = useMutation({
 		mutationFn: (val: MetaTechniques) => {
 			const id = val.id || "";
-			loadToast("updating Techniques", "", 0, "blue");
+			loadToast("Mise à jour des données de zone", "", 0, "blue");
 			return updateMetaTechniques(id, val);
 		},
 		onSuccess: (data) => {
-			loadToast("Techniques Updated", "", 3000, "green");
+			loadToast("Données de zone mises à jour", "", 3000, "green");
 			console.log("Techniques updated successfully:", data);
 			setTechData(data);
 		},
 		onError: (error) => {
-			loadToast("Error updating Techniques", "", 3000, "red");
+			loadToast("Erreur lors de la mise à jour des données de zone", "", 3000, "red");
 			console.error("Error updating Techniques:", error);
 		},
 	});
@@ -455,10 +455,10 @@ export const TechForm = forwardRef<TechFormHandle>((_props, ref) => {
 					<div>
 						<p className="text-black/70">
 							{" "}
-							Informations techniques du vol de drone
+							Informations sur la zone de vol du drone
 						</p>
 						<p className="text-black/70 text-sm">
-							<span className="red-star">*</span> indicates required fields
+							<span className="red-star">*</span> Champs obligatoires
 						</p>
 					</div>
 				</div>

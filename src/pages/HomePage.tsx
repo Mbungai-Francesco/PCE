@@ -1,17 +1,16 @@
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/ui/navbar";
 
 const HomePage = () => {
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 
 	const features = [
-		"Conformité aux normes ISO 19115 et INSPIRE",
-		"Import et export XML pour interopérabilité",
-		"Validation automatique des champs obligatoires",
+		"Conformité aux normes COVADIS et INSPIRE",
+		// "Import et export XML pour interopérabilité",
 		"Gestion des systèmes de référence spatiale (EPSG)",
 		"Sauvegarde progressive et reprise possible",
-		"Interface intuitive en 3 étapes simples",
+		"Interface intuitive en quelques étapes",
 	];
 
 	const metadataTypes = [
@@ -92,7 +91,7 @@ const HomePage = () => {
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center">
 							<Button
-								onClick={() => navigate("/form")}
+								onClick={() => window.open("/form", "_blank")}
 								className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg rounded-full"
 							>
 								🚀 NOUVEAU PROJET

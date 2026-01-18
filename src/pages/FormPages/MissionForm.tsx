@@ -135,17 +135,17 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 
 	const { mutate } = useMutation({
 		mutationFn: (val: MissionDrone) => {
-			loadToast("Creating Mission", "", 0, "blue");
+			loadToast("Création des Info Générales", "", 0, "blue");
 			return createMissionsDrones(val);
 		},
 		onSuccess: (data) => {
-			loadToast("Mission Created", "", 3000, "green");
+			loadToast("Informations Générales Créées", "", 3000, "green");
 			console.log("Mission Drone created successfully:", data);
 			setJwt(data.id || "");
 			setMissionData(data);
 		},
 		onError: (error) => {
-			loadToast("Error Creating Mission", "", 3000, "red");
+			loadToast("Erreur lors de la création", "des Informations Générales", 3000, "red");
 			console.error("Error creating Mission Drone:", error);
 		},
 	});
@@ -153,16 +153,16 @@ export const MissionForm = forwardRef<MissionFormHandle>((_props, ref) => {
 	const { mutate: update } = useMutation({
 		mutationFn: (val: MissionDrone) => {
 			const id = val.id || "";
-			loadToast("updating Mission", "", 0, "blue");
+			loadToast("Mise à jour des Info Générales", "", 0, "blue");
 			return updateMissionDrone(id, val);
 		},
 		onSuccess: (data) => {
-			loadToast("Mission Updated", "", 3000, "green");
+			loadToast("Info Générales Mises à jour", "", 3000, "green");
 			console.log("Mission Drone updated successfully:", data);
 			setMissionData(data);
 		},
 		onError: (error) => {
-			loadToast("Error updating Mission", "", 3000, "red");
+			loadToast("Erreur lors de la mise à jour", "des Informations Générales", 3000, "red");
 			console.error("Error updating Mission Drone:", error);
 		},
 	});
